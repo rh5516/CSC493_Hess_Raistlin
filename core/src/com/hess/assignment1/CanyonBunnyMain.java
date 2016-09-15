@@ -3,6 +3,7 @@ package com.hess.assignment1;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 
 public class CanyonBunnyMain implements ApplicationListener
@@ -17,6 +18,8 @@ public class CanyonBunnyMain implements ApplicationListener
 	{
 		//Set log level to debug
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		
+		Assets.instance.init(new AssetManager());
 		
 		//Init controller and renderer
 		worldController = new WorldController();
@@ -66,6 +69,7 @@ public class CanyonBunnyMain implements ApplicationListener
 	public void dispose()
 	{
 		worldRenderer.dispose();
+		Assets.instance.dispose();
 	}
 	
 }
