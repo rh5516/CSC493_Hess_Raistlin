@@ -14,10 +14,10 @@ public class Assets implements Disposable, AssetErrorListener
 	public static final String TAG = Assets.class.getName();
 	public static final Assets instance = new Assets();
 	private AssetManager assetManager;
-	public AssetBunny bunny;
-	public AssetRock rock;
-	public AssetGoldCoin goldCoin;
-	public AssetFeather feather;
+	public AssetMelonMan melonMan;
+	public AssetGround ground;
+	public AssetRain rain;
+	public AssetStar star;
 	public AssetLevelDecoration levelDecoration;
 	private Assets(){}
 	
@@ -39,10 +39,10 @@ public class Assets implements Disposable, AssetErrorListener
 			t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		}
 		
-		bunny = new AssetBunny(atlas);
-		rock = new AssetRock(atlas);
-		goldCoin = new AssetGoldCoin(atlas);
-		feather = new AssetFeather(atlas);
+		melonMan = new AssetMelonMan(atlas);
+		ground = new AssetGround(atlas);
+		rain = new AssetRain(atlas);
+		star = new AssetStar(atlas);
 		levelDecoration = new AssetLevelDecoration(atlas);
 	}
 
@@ -64,41 +64,39 @@ public class Assets implements Disposable, AssetErrorListener
 		Gdx.app.error(TAG, "Couldn't load asset '"+asset.fileName+"'",(Exception)throwable);
 	}
 	
-	public class AssetBunny
+	public class AssetMelonMan
 	{
 		public final AtlasRegion head;
-		public AssetBunny(TextureAtlas atlas)
+		public AssetMelonMan(TextureAtlas atlas)
 		{
-			head = atlas.findRegion("bunny_head");
+			head = atlas.findRegion("player");
 		}
 	}
 	
-	public class AssetRock
+	public class AssetGround
 	{
 		public final AtlasRegion edge;
-		public final AtlasRegion middle;
-		public AssetRock(TextureAtlas atlas) 
+		public AssetGround(TextureAtlas atlas) 
 		{
-			edge = atlas.findRegion("rock_edge");
-			middle = atlas.findRegion("rock_middle");
+			edge = atlas.findRegion("filler_sand");
 		}
 	}
 	
-	public class AssetGoldCoin
+	public class AssetRain
 	{
-		public final AtlasRegion goldCoin;
-		public AssetGoldCoin(TextureAtlas atlas)
+		public final AtlasRegion rain;
+		public AssetRain(TextureAtlas atlas)
 		{
-			goldCoin = atlas.findRegion("item_gold_coin");
+			rain = atlas.findRegion("rain");
 		}
 	}
 	
-	public class AssetFeather
+	public class AssetStar
 	{
-		public final AtlasRegion feather;
-		public AssetFeather (TextureAtlas atlas)
+		public final AtlasRegion star;
+		public AssetStar (TextureAtlas atlas)
 		{
-			feather = atlas.findRegion("item_feather");
+			star = atlas.findRegion("star");
 		}
 	}
 	
@@ -106,18 +104,18 @@ public class Assets implements Disposable, AssetErrorListener
 	{
 		public final AtlasRegion cloud01;
 		public final AtlasRegion cloud02;
-		public final AtlasRegion cloud03;
-		public final AtlasRegion mountainLeft;
-		public final AtlasRegion mountainRight;
-		public final AtlasRegion waterOverlay;
+		public final AtlasRegion pyramidFar;
+		public final AtlasRegion pyramidNear;
+		public final AtlasRegion cactus;
+		public final AtlasRegion desertBG;
 		public AssetLevelDecoration(TextureAtlas atlas)
 		{
 			cloud01 = atlas.findRegion("cloud01");
 			cloud02 = atlas.findRegion("cloud02");
-			cloud03 = atlas.findRegion("cloud03");
-			mountainLeft = atlas.findRegion("mountainLeft");
-			mountainRight = atlas.findRegion("mountainRight");
-			waterOverlay = atlas.findRegion("water_overlay");
+			pyramidFar = atlas.findRegion("pyramidFar");
+			pyramidNear = atlas.findRegion("pyramidNear");
+			cactus = atlas.findRegion("bg_close");
+			desertBG = atlas.findRegion("desertBG");
 		}
 	}
 }
