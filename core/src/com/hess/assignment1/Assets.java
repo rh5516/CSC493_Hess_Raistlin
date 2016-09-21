@@ -9,6 +9,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Disposable;
 
+/**
+ * This class is responsible for defining the various objects that will be placed in the game
+ * 
+ * @author Raistlin Hes
+ * 
+ */
 public class Assets implements Disposable, AssetErrorListener
 {
 	public static final String TAG = Assets.class.getName();
@@ -21,6 +27,9 @@ public class Assets implements Disposable, AssetErrorListener
 	public AssetLevelDecoration levelDecoration;
 	private Assets(){}
 	
+	/**
+	 * Initializes the assetManager and each unique object
+	 */
 	public void init(AssetManager assetManager)
 	{
 		this.assetManager = assetManager;
@@ -46,23 +55,45 @@ public class Assets implements Disposable, AssetErrorListener
 		levelDecoration = new AssetLevelDecoration(atlas);
 	}
 
+	/**
+	 * Tells assetManager to clean up 
+	 */
 	@Override
 	public void dispose()
 	{
 		assetManager.dispose();
 	}
 
+	/**
+	 * Prints out an error message along with the asset responsible
+	 * 
+	 * @param filename
+	 * @param type
+	 * @param throwable
+	 */
 //	@Override
 	public void error(String filename, Class type, Throwable throwable)
 	{
 		Gdx.app.error(TAG, "Couldn't load asset '"+filename+"'",(Exception)throwable);
 	}
 	
+	/**
+	 * Prints out an error message along with the asset responsible
+	 * 
+	 * @param filename
+	 * @param type
+	 * @param throwable
+	 */
 	@Override
 	public void error(AssetDescriptor asset, Throwable throwable)
 	{
 		Gdx.app.error(TAG, "Couldn't load asset '"+asset.fileName+"'",(Exception)throwable);
 	}
+	/**
+	 * The following methods define what make up a game object, as well as pulling
+	 * their texures out of the TextureAtlas
+	 *
+	 */
 	
 	public class AssetBunny
 	{

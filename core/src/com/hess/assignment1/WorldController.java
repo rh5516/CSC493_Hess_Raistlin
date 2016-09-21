@@ -1,17 +1,22 @@
 package com.hess.assignment1;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * This class is responsible for updating information about the game objects, as well as the camera,
+ * and handling input
+ * 
+ * @author Raistlin Hess
+ *
+ */
 public class WorldController extends InputAdapter
 {
 	private static final String TAG = WorldController.class.getName();
@@ -24,6 +29,9 @@ public class WorldController extends InputAdapter
 		init();
 	}
 	
+	/**
+	 * This method sets up WorldController to accept and process input and instantiating the CameraHelper
+	 */
 	public void init()
 	{
 		Gdx.input.setInputProcessor(this);
@@ -31,6 +39,10 @@ public class WorldController extends InputAdapter
 		initTestObjects();
 	}
 	
+	/**
+	 * This method creates some simple test objects to make sure that they are loaded in correctly
+	 * It places them randomly within the camera's view
+	 */
 	private void initTestObjects()
 	{
 		testSprites = new Sprite[5];
@@ -82,6 +94,13 @@ public class WorldController extends InputAdapter
 //		selectedSprite = 0;
 	}
 	
+	/**
+	 * This method generates images on the fly
+	 * 
+	 * @param width
+	 * @param height
+	 * @return
+	 */
 	private Pixmap createProceduralPixmap(int width, int height)
 	{
 		Pixmap pixmap = new Pixmap(width, height, Format.RGBA8888);
@@ -101,6 +120,11 @@ public class WorldController extends InputAdapter
 		return pixmap;
 	}
 	
+	/**
+	 * This method causes the currently selected object to start rotating  
+	 * 
+	 * @param deltaTime
+	 */
 	private void updateTestObjects(float deltaTime)
 	{
 		//Get current rotation
@@ -116,6 +140,12 @@ public class WorldController extends InputAdapter
 		testSprites[selectedSprite].setRotation(rotation);
 	}
 	
+	/**
+	 * This method handles any input and performs actions, such as moving the selected object,
+	 * selecting another object, moving the camera, and zooming the camera
+	 * 
+	 * @param deltaTime
+	 */
 	private void handleDebugInput(float deltaTime)
 	{
 		if(Gdx.app.getType() != ApplicationType.Desktop)
@@ -192,6 +222,9 @@ public class WorldController extends InputAdapter
 		}
 	}
 	
+	/**
+	 * This method moves the camera based on the parameters x and y
+	 */
 	private void moveCamera(float x, float y)
 	{
 		x += cameraHelper.getPosition().x;
@@ -199,12 +232,20 @@ public class WorldController extends InputAdapter
 		cameraHelper.setPosition(x, y);
 	}
 	
+	/**
+	 * This method moves the currently selected sprite based on the parameters x and y 
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	private void moveSelectedSprite(float x, float y)
 	{
 		testSprites[selectedSprite].translate(x,y);
 	}
 	
-	//Overrides default keyUp so that it resets the gmae world
+	/**
+	 * Overrides default input for keyUp so that it resets the game world
+	 */
 	@Override
 	public boolean keyUp(int keycode)
 	{
@@ -237,6 +278,11 @@ public class WorldController extends InputAdapter
 		return false;
 	}
 	
+	/**
+	 * Updates the world relative to the previous update
+	 * 
+	 * @param deltaTime
+	 */
 	public void update (float deltaTime)
 	{
 		handleDebugInput(deltaTime);
