@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
-import com.hess.assignment1.CanyonBunnyMain;
+import com.hess.assignment1.MelonManMain;
 
 public class DesktopLauncher
 {
@@ -23,6 +23,6 @@ public class DesktopLauncher
 			TexturePacker.process(settings, "assets-raw/images", "../core/assets/images","melonman.pack");
 		}
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new CanyonBunnyMain(), config);
+		new LwjglApplication(new MelonManMain(), config);
 	}
 }

@@ -6,13 +6,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 
-public class CanyonBunnyMain implements ApplicationListener
+/**
+ * This class is the heart and soul of the game. 
+ * 
+ * @author Raistlin Hess
+ *
+ */
+public class MelonManMain implements ApplicationListener
 {
-	private static final String TAG = CanyonBunnyMain.class.getName();
+	private static final String TAG = MelonManMain.class.getName();
 	private WorldController worldController;
 	private WorldRenderer worldRenderer;
 	private boolean paused;
 	
+	/**
+	 * This method initializes necessary classes, including AssetManager, WorldController, and WorldRenderer
+	 */
 	@Override
 	public void create()
 	{
@@ -29,12 +38,18 @@ public class CanyonBunnyMain implements ApplicationListener
 		paused = false;
 	}
 	
+	/**
+	 * Resizes the game world based on the current window size
+	 */
 	@Override
 	public void resize(int width, int height)
 	{
 		worldRenderer.resize(width, height);
 	}
 	
+	/**
+	 * This draws all of the sprites to the screen and updates any variables
+	 */
 	@Override
 	public void render()
 	{
@@ -53,18 +68,27 @@ public class CanyonBunnyMain implements ApplicationListener
 		worldRenderer.render();
 	}
 	
+	/**
+	 * Unused method for Android platform
+	 */
 	@Override
 	public void pause()
 	{
 		paused = true;
 	}
 	
+	/**
+	 * Unused method for Android platform
+	 */
 	@Override
 	public void resume()
 	{
 		paused = false;
 	}
 	
+	/**
+	 * Cleans up all assets and the world
+	 */
 	@Override
 	public void dispose()
 	{
