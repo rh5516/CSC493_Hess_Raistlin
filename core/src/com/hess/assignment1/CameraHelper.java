@@ -18,7 +18,7 @@ public class CameraHelper
 	private final float MAX_ZOOM_OUT = 10.0f;
 	private Vector2 position;
 	private float zoom;
-	private Sprite target;
+	private AbstractGameObject target;
 	
 	/**
 	 * Sets the initial position and zooming factor
@@ -34,13 +34,10 @@ public class CameraHelper
 	 */
 	public void update(float deltaTime)
 	{
-		if(!hasTarget())
-		{
-			return;
-		}
+		if(!hasTarget()) return;
 		
-		position.x = target.getX() + target.getOriginX();
-		position.y = target.getY() + target.getOriginY();
+		position.x = target.position.x + target.origin.x;
+		position.y = target.position.y + target.origin.y;
 	}
 	
 	/**
@@ -99,7 +96,7 @@ public class CameraHelper
 	 * 
 	 * @param target
 	 */
-	public void setTarget(Sprite target)
+	public void setTarget(AbstractGameObject target)
 	{
 		this.target = target;
 	}
@@ -109,7 +106,7 @@ public class CameraHelper
 	 * 
 	 * @return
 	 */
-	public Sprite getTarget()
+	public AbstractGameObject getTarget()
 	{
 		return target;
 	}
@@ -130,7 +127,7 @@ public class CameraHelper
 	 * @param target
 	 * @return
 	 */
-	public boolean hasTarget(Sprite target)
+	public boolean hasTarget(AbstractGameObject target)
 	{
 		return hasTarget() && this.target.equals(target);
 	}

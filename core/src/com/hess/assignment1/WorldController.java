@@ -20,9 +20,10 @@ import com.badlogic.gdx.utils.Array;
 public class WorldController extends InputAdapter
 {
 	private static final String TAG = WorldController.class.getName();
-	public Sprite[] testSprites;
-	public int selectedSprite;
 	public CameraHelper cameraHelper;
+	public Level level;
+	public int lives;
+	public int score;
 	
 	public WorldController()
 	{
@@ -30,70 +31,26 @@ public class WorldController extends InputAdapter
 	}
 	
 	/**
-	 * This method sets up WorldController to accept and process input and instantiating the CameraHelper
+	 * This method sets up WorldController to accept and process input, initialize the CameraHelper,
+	 * and sets the lives and call initLevel()
 	 */
 	public void init()
 	{
 		Gdx.input.setInputProcessor(this);
 		cameraHelper = new CameraHelper();
-		initTestObjects();
+		lives = Constants.LIVES_START;
+		initLevel();
 	}
 	
 	/**
-	 * This method creates some simple test objects to make sure that they are loaded in correctly
-	 * It places them randomly within the camera's view
+	 * Sets the score to 0 and loads the first level
 	 */
-	private void initTestObjects()
+	public void initLevel()
 	{
-		testSprites = new Sprite[5];
-		Array<TextureRegion> regions = new Array<TextureRegion>();
-		regions.add(Assets.instance.bunny.head);
-		regions.add(Assets.instance.feather.feather);
-		regions.add(Assets.instance.goldCoin.goldCoin);
-		for(int i = 0; i < testSprites.length; i++)
-		{
-			Sprite spr = new Sprite(regions.random());
-			spr.setSize(1,1);
-			spr.setOrigin(spr.getWidth()/2.0f,spr.getHeight()/2.0f);
-			float randomX = MathUtils.random(-2.0f,2.0f);
-			float randomY = MathUtils.random(-2.0f,2.0f);
-			spr.setPosition(randomX, randomY);
-			testSprites[i] = spr;
-		}
-		selectedSprite = 0;
-//		testSprites = new Sprite[5];
-		
-//		//Create empty POT-sized Pixmap with 8-bit RBA data
-//		int width = 32;
-//		int height = 32;
-//		Pixmap pixmap = createProceduralPixmap(width,height);
-//		
-//		//Cretae new texture from pixmap data
-//		Texture texture = new Texture(pixmap);
-//		
-//		//Create new sprites using new texture
-//		for(int i = 0; i < testSprites.length; i++)
-//		{
-//			//Set size to 1m x 1m in game world
-//			Sprite spr = new Sprite(texture);
-//			spr.setSize(1, 1);
-//						
-//			//Set sprite's origin to the center
-//			spr.setOrigin(spr.getWidth()/2.0f,spr.getHeight()/2.0f);
-//			
-//			//Calculate random position
-//			float randomX = MathUtils.random(-2.0f,2.0f);
-//			float randomY = MathUtils.random(-2.0f,2.0f);
-//			spr.setPosition(randomX, randomY);
-//			
-//			//Add to array
-//			testSprites[i] = spr;
-//		}
-//		
-//		//Set first sprite as current
-//		selectedSprite = 0;
+		score = 0;
+		level = new Level(Constants.LEVEL_01);
 	}
-	
+		
 	/**
 	 * This method generates images on the fly
 	 * 
@@ -121,26 +78,6 @@ public class WorldController extends InputAdapter
 	}
 	
 	/**
-	 * This method causes the currently selected object to start rotating  
-	 * 
-	 * @param deltaTime
-	 */
-	private void updateTestObjects(float deltaTime)
-	{
-		//Get current rotation
-		float rotation = testSprites[selectedSprite].getRotation();
-				
-		//Rotate by 90 degrees per second
-		rotation += 90*deltaTime;
-		
-		//Wrap at 360 degrees
-		rotation %= 360;
-		
-		//Set new rotation to selectedsprite
-		testSprites[selectedSprite].setRotation(rotation);
-	}
-	
-	/**
 	 * This method handles any input and performs actions, such as moving the selected object,
 	 * selecting another object, moving the camera, and zooming the camera
 	 * 
@@ -151,25 +88,6 @@ public class WorldController extends InputAdapter
 		if(Gdx.app.getType() != ApplicationType.Desktop)
 		{
 			return;
-		}
-		
-		//Controls for current sprite
-		float sprMoveSpeed = 5*deltaTime;
-		if(Gdx.input.isKeyJustPressed(Keys.A))
-		{
-			moveSelectedSprite(-sprMoveSpeed,0);
-		}
-		if(Gdx.input.isKeyJustPressed(Keys.D))
-		{
-			moveSelectedSprite(sprMoveSpeed,0);
-		}
-		if(Gdx.input.isKeyJustPressed(Keys.W))
-		{
-			moveSelectedSprite(0,sprMoveSpeed);
-		}
-		if(Gdx.input.isKeyJustPressed(Keys.S))
-		{
-			moveSelectedSprite(0,-sprMoveSpeed);
 		}
 		
 		//Controls for camera movement
@@ -233,17 +151,6 @@ public class WorldController extends InputAdapter
 	}
 	
 	/**
-	 * This method moves the currently selected sprite based on the parameters x and y 
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	private void moveSelectedSprite(float x, float y)
-	{
-		testSprites[selectedSprite].translate(x,y);
-	}
-	
-	/**
 	 * Overrides default input for keyUp so that it resets the game world
 	 */
 	@Override
@@ -254,25 +161,6 @@ public class WorldController extends InputAdapter
 		{
 			init();
 			Gdx.app.debug(TAG, "Game world reset.");
-		}
-		else if(keycode == Keys.SPACE)
-		{
-			selectedSprite = (selectedSprite+1) % testSprites.length;
-			
-			//Update camera's target to follow current sprite
-			if(cameraHelper.hasTarget())
-			{
-				cameraHelper.setTarget(testSprites[selectedSprite]);
-			}
-			
-			Gdx.app.debug(TAG, "Sprite "+selectedSprite+"selected.");
-		}
-		
-		//Toggle camera following current sprite
-		else if(keycode == Keys.ENTER)
-		{
-			cameraHelper.setTarget(cameraHelper.hasTarget() ? null : testSprites[selectedSprite]);
-			Gdx.app.debug(TAG, "Camera follow enabled: "+cameraHelper.hasTarget());
 		}
 		
 		return false;
@@ -286,7 +174,6 @@ public class WorldController extends InputAdapter
 	public void update (float deltaTime)
 	{
 		handleDebugInput(deltaTime);
-		updateTestObjects(deltaTime);
 		cameraHelper.update(deltaTime);
 	}
 }
