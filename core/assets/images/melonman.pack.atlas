@@ -1,89 +1,96 @@
 
 melonman.pack.png
-size: 512,256
+size: 1024,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 bg_close
   rotate: false
-  xy: 360, 190
+  xy: 382, 51
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 bg_far
   rotate: false
-  xy: 426, 204
-  size: 46, 50
-  orig: 46, 50
+  xy: 930, 448
+  size: 89, 57
+  orig: 89, 57
   offset: 0, 0
   index: -1
 bg_mid
   rotate: false
-  xy: 2, 2
-  size: 33, 21
-  orig: 33, 21
+  xy: 930, 399
+  size: 74, 47
+  orig: 74, 47
   offset: 0, 0
   index: -1
 cloud01
   rotate: false
-  xy: 160, 86
+  xy: 202, 37
   size: 178, 78
   orig: 178, 78
   offset: 0, 0
   index: -1
 cloud02
   rotate: false
-  xy: 160, 166
+  xy: 2, 27
   size: 198, 88
   orig: 198, 88
   offset: 0, 0
   index: -1
 desert_bg
   rotate: false
-  xy: 2, 25
-  size: 64, 64
-  orig: 64, 64
+  xy: 2, 117
+  size: 744, 388
+  orig: 744, 388
+  offset: 0, 0
+  index: -1
+fg_sand
+  rotate: false
+  xy: 748, 325
+  size: 180, 180
+  orig: 180, 180
   offset: 0, 0
   index: -1
 filler_sand
   rotate: false
-  xy: 68, 57
-  size: 64, 32
-  orig: 64, 32
+  xy: 748, 125
+  size: 64, 33
+  orig: 64, 33
   offset: 0, 0
   index: -1
 hazard
   rotate: false
-  xy: 68, 24
+  xy: 448, 84
   size: 50, 31
   orig: 50, 31
   offset: 0, 0
   index: -1
 player
   rotate: false
-  xy: 2, 91
+  xy: 748, 160
   size: 156, 163
   orig: 156, 163
   offset: 0, 0
   index: -1
 rain
   rotate: false
-  xy: 340, 143
+  xy: 930, 376
   size: 13, 21
   orig: 13, 21
   offset: 0, 0
   index: -1
 snake
   rotate: false
-  xy: 37, 2
+  xy: 906, 302
   size: 21, 21
   orig: 21, 21
   offset: 0, 0
   index: -1
 star
   rotate: false
-  xy: 474, 231
+  xy: 2, 2
   size: 25, 23
   orig: 25, 23
   offset: 0, 0
