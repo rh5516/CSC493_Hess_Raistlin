@@ -41,10 +41,9 @@ public class PyramidNear extends AbstractGameObject
 	/**
 	 * Draws the mountains so that they cover the entire background of the level
 	 */
-	private void drawPyramid(SpriteBatch batch, float offsetX, float offsetY, float tintColor)
+	private void drawPyramid(SpriteBatch batch, float offsetX, float offsetY)
 	{
 		TextureRegion reg = null;
-		batch.setColor(tintColor, tintColor, tintColor, 1);
 		float xRel = dimension.x*offsetX;
 		float yRel = dimension.y*offsetY;
 		
@@ -59,9 +58,6 @@ public class PyramidNear extends AbstractGameObject
 			batch.draw(reg.getTexture(), origin.x+xRel, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
 			xRel += dimension.x*2;//+(pyramidLength/dimension.x);
 		}
-		
-		//Reset color to white
-		batch.setColor(1,1,1,1);
 	}
 	
 	/**
@@ -71,6 +67,6 @@ public class PyramidNear extends AbstractGameObject
 	public void render(SpriteBatch batch)
 	{
 		//Distant pyramids (gray)
-		drawPyramid(batch, position.x/6, 0.6f, 0.9f);
+		drawPyramid(batch, position.x/6, 0.6f);
 	}
 }

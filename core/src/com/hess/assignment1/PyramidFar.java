@@ -34,17 +34,16 @@ public class PyramidFar extends AbstractGameObject
 		regPyramidFar = Assets.instance.levelDecoration.pyramidNear;
 		
 		//Shift pyramid and extend length
-		origin.x = -dimension.x*2;
+		origin.x = dimension.x/2;
 		length += dimension.x*2;
 	}
 	
 	/**
 	 * Draws the PyramidFars at regular x intervals
 	 */
-	private void drawPyramid(SpriteBatch batch, float offsetX, float offsetY, float tintColor)
+	private void drawPyramid(SpriteBatch batch, float offsetX, float offsetY)//, float tintColor)
 	{
 		TextureRegion reg = null;
-		batch.setColor(tintColor, tintColor, tintColor, 1);
 		float xRel = dimension.x*offsetX;
 		float yRel = dimension.y*offsetY;
 		
@@ -59,9 +58,6 @@ public class PyramidFar extends AbstractGameObject
 			batch.draw(reg.getTexture(), origin.x+xRel, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
 			xRel += dimension.x*3;
 		}
-		
-		//Reset color to white
-		batch.setColor(1,1,1,1);
 	}
 	
 	/**
@@ -70,7 +66,6 @@ public class PyramidFar extends AbstractGameObject
 	@Override
 	public void render(SpriteBatch batch)
 	{
-		//Distant mountains (light gray)
-		drawPyramid(batch, position.x/6, 1.0f, 0.7f);
+		drawPyramid(batch, position.x/6, 1.0f);
 	}
 }

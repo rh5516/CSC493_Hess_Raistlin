@@ -69,7 +69,7 @@ public class Clouds extends AbstractGameObject
 		cloud.setRegion(regClouds.random());
 		Vector2 pos = new Vector2();
 		pos.x = length+10;	//Position after end of the level
-		pos.y += 1.9;		//Base position
+		pos.y += 2.2f;		//Base position
 		pos.y += MathUtils.random(0.0f, 0.8f) * (MathUtils.randomBoolean() ? 1 : -1);	//Adds random value to position
 		cloud.position.set(pos);
 		return cloud;

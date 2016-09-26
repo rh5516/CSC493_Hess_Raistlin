@@ -200,25 +200,28 @@ public class Level
 		background.render(batch);
 		background.position.x = bgTmp;
 		
-		//Draw Pyramids, slightly moving back and forth
+		//Draw Pyramids
 		float pfTmp = pyramidFar.position.x;
 		float pnTmp = pyramidNear.position.x;
+		pyramidFar.render(batch);
+		pyramidNear.render(batch);
+		
+		//Draw transparent pyramids moving back and forth
+		batch.setColor(1,1,1,0.5f);
 		pyramidFar.position.x += cos*4;
 		pyramidFar.render(batch);
 		pyramidFar.position.x = pfTmp;
 		
-		pyramidNear.position.x += sin*6;
+		pyramidNear.position.x += cos*4;//sin*6;
 		pyramidNear.render(batch);
 		pyramidNear.position.x = pnTmp;
+		batch.setColor(1,1,1,1);
 		
 		//Draw Rocks
 		for(Ground ground: ground)
 		{
 			ground.render(batch);		
 		}
-		
-		//Draw Clouds
-		clouds.render(batch);
 		
 		//Draw Foreground
 		for(Foreground fg: foreground)
@@ -227,12 +230,15 @@ public class Level
 		}
 		
 		//Draw second, semi-transparent, moving background
-		batch.setColor(1,1,1,0.3f);
+		batch.setColor(1,1,1,0.4f);
 		background.position.x *= sin + 0.8f;
 		background.position.y += 0.7f;
 		background.render(batch);
 		background.position.x = bgTmp;
 		background.position.y -= 0.7f;
 		batch.setColor(1,1,1,1);
+		
+		//Draw Clouds
+		clouds.render(batch);
 	}
 }
