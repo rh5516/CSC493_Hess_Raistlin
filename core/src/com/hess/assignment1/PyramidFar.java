@@ -57,10 +57,7 @@ public class PyramidFar extends AbstractGameObject
 		{
 			reg = regPyramidFar;
 			batch.draw(reg.getTexture(), origin.x+xRel, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
-			xRel += dimension.x*2;
-			
-			batch.draw(reg.getTexture(), origin.x+xRel, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
-			xRel += dimension.x*1.6;
+			xRel += dimension.x*3;
 		}
 		
 		//Reset color to white
@@ -74,6 +71,6 @@ public class PyramidFar extends AbstractGameObject
 	public void render(SpriteBatch batch)
 	{
 		//Distant mountains (light gray)
-		drawPyramid(batch, dimension.x/6, 1.0f, 0.7f);
+		drawPyramid(batch, position.x/6, 1.0f, 0.7f);
 	}
 }

@@ -12,7 +12,6 @@ public class DesertBackground extends AbstractGameObject
 {
 	private TextureRegion background;
 	private float length;
-	private float random;
 	
 	/**
 	 * Sets the length of DesertBackground to the parameter length
@@ -22,7 +21,6 @@ public class DesertBackground extends AbstractGameObject
 	public DesertBackground(float length)
 	{
 		this.length = length;
-		this.random = 1;
 		init();
 	}
 	
@@ -31,17 +29,9 @@ public class DesertBackground extends AbstractGameObject
 	 */
 	private void init()
 	{
-		dimension.set(length+(length/4), length/9.0f);
+		dimension.set(length+(length/1.7f), length/7.0f);
 		background = Assets.instance.levelDecoration.desertBG;
 		origin.x = -dimension.x/2;
-	}
-	
-	/**
-	 * This is a random value to shift the background. Intended to simulate heat shimmer
-	 */
-	public void setRandom(float random)
-	{
-		this.random = random;
 	}
 	
 	/**
@@ -52,8 +42,6 @@ public class DesertBackground extends AbstractGameObject
 	{
 		TextureRegion reg = null;
 		reg = background;
-		this.position.x *= random;
 		batch.draw(reg.getTexture(), position.x+origin.x, position.y+origin.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
-		this.position.x /= random;
 	}
 }

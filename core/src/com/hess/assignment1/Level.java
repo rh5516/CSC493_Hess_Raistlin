@@ -24,8 +24,7 @@ public class Level
 	public PyramidNear pyramidNear;
 	public PyramidFar pyramidFar;
 	public DesertBackground background;
-	public int shimmer;
-	public boolean shimmerMaxed;
+	public float sinVal;
 	
 	/**
 	 * This assigns different color values to unique game objects
@@ -82,8 +81,7 @@ public class Level
 	public Level(String filename)
 	{
 		init(filename);
-		shimmer = 0;
-		shimmerMaxed = false;
+		sinVal = 1.0f;
 	}
 	
 	/**
@@ -172,10 +170,10 @@ public class Level
 		clouds.position.set(0,2.5f);
 		pyramidNear = new PyramidNear(pixmap.getWidth());
 		pyramidFar = new PyramidFar(pixmap.getWidth());
-		pyramidNear.position.set(-1,-1.2f);
+		pyramidNear.position.set(-1,-0.6f);
 		pyramidFar.position.set(pyramidFar.dimension.x*2,-1.2f);
 		background = new DesertBackground(pixmap.getWidth());
-		background.position.set(-background.origin.x-pixmap.getWidth()/10.0f,-4.0f);
+		background.position.set(-background.origin.x,-6.5f);
 		
 		
 		//Free memory
@@ -190,40 +188,28 @@ public class Level
 	 */
 	public void render(SpriteBatch batch)
 	{
-		float random = 1;
-		//If shimmer is greater than a value, don't shimmer again until 0
-		if(shimmerMaxed)
-		{
-			if(shimmer >= 0)
-			{
-				shimmerMaxed = false;
-			}
-			else
-			{
-				random = 1;
-				shimmer--;
-			}
-		}
-		else
-		{
-			if(shimmer%1000 <= 100000)
-			{
-				shimmer++;
-				random = MathUtils.random(0.1f, 0.2f);
-			}
-			else
-			{
-				shimmerMaxed = true;
-			}
-		}
+		//These values are used to slightly move objects' x position in the background
+		//Supposed to simulate a heat shimmer effect
+		float sin = (float)(Math.sin(sinVal)%(sinVal))/10;//%sinVal;
+		float cos = (float)(Math.cos(sinVal)%sinVal)/8;
+		sinVal += 0.01f;
 		
-		//Draw Background
-		background.setRandom(random);
+		//Draw Background, moving slightly
+		float bgTmp = background.position.x;
+		background.position.x *= cos + 0.8f;
 		background.render(batch);
+		background.position.x = bgTmp;
 		
-		//Draw Pyramids
+		//Draw Pyramids, slightly moving back and forth
+		float pfTmp = pyramidFar.position.x;
+		float pnTmp = pyramidNear.position.x;
+		pyramidFar.position.x += cos*4;
 		pyramidFar.render(batch);
+		pyramidFar.position.x = pfTmp;
+		
+		pyramidNear.position.x += sin*6;
 		pyramidNear.render(batch);
+		pyramidNear.position.x = pnTmp;
 		
 		//Draw Rocks
 		for(Ground ground: ground)
@@ -239,5 +225,14 @@ public class Level
 		{
 			fg.render(batch);
 		}
+		
+		//Draw second, semi-transparent, moving background
+		batch.setColor(1,1,1,0.3f);
+		background.position.x *= sin + 0.8f;
+		background.position.y += 0.7f;
+		background.render(batch);
+		background.position.x = bgTmp;
+		background.position.y -= 0.7f;
+		batch.setColor(1,1,1,1);
 	}
 }

@@ -57,7 +57,7 @@ public class PyramidNear extends AbstractGameObject
 		{
 			reg = regPyramidNear;
 			batch.draw(reg.getTexture(), origin.x+xRel, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
-			xRel += dimension.x+(pyramidLength/dimension.x);
+			xRel += dimension.x*2;//+(pyramidLength/dimension.x);
 		}
 		
 		//Reset color to white
@@ -71,6 +71,6 @@ public class PyramidNear extends AbstractGameObject
 	public void render(SpriteBatch batch)
 	{
 		//Distant pyramids (gray)
-		drawPyramid(batch, dimension.x/6, 0.6f, 0.9f);
+		drawPyramid(batch, position.x/6, 0.6f, 0.9f);
 	}
 }

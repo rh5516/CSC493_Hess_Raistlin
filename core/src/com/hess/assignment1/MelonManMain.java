@@ -61,7 +61,7 @@ public class MelonManMain implements ApplicationListener
 		}
 		
 		//Sets background clear color to a blue
-		Gdx.gl.glClearColor(0x64/255.0f, 0x95/255.0f, 0xed/255.0f, 0xff/255.0f);//100,149,237,255);
+		Gdx.gl.glClearColor(0x24/255.0f, 0xb0/255.0f, 0xff/255.0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		//Render world to the screen
