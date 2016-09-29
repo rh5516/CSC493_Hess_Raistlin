@@ -1,5 +1,4 @@
 package com.hess.assignment1;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,6 +16,9 @@ public class Level
 	public static final String TAG = Level.class.getName();
 	//Objects
 	public Array<Rock> rocks;
+	public BunnyHead bunnyHead;
+	public Array<GoldCoin> goldCoins;
+	public Array<Feather> feathers;
 	//Decoration
 	public Clouds clouds;
 	public Mountains mountains;
@@ -86,8 +88,13 @@ public class Level
 	 */
 	private void init(String filename)
 	{
+		//Player character
+		bunnyHead = null;
+		
 		//Objects
 		rocks = new Array<Rock>();
+		goldCoins = new Array<GoldCoin>();
+		feathers = new Array<Feather>();
 		
 		//Load image file that represents level data
 		Pixmap pixmap = new Pixmap(Gdx.files.internal(filename));
@@ -130,19 +137,28 @@ public class Level
 				//Player spawnpoint
 				else if(BLOCK_TYPE.PLAYER_SPAWNPOINT.sameColor(currentPixel))
 				{
-					
+					obj = new BunnyHead();
+					offsetHeight = -3.0f;
+					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+					bunnyHead = (BunnyHead)obj;
 				}
 				
 				//Feather
 				else if(BLOCK_TYPE.ITEM_FEATHER.sameColor(currentPixel))
 				{
-					
+					obj = new Feather();
+					offsetHeight = -1.5f;
+					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+					feathers.add((Feather)obj);
 				}
 				
 				//Gold Coin
 				else if(BLOCK_TYPE.ITEM_GOLD_COIN.sameColor(currentPixel))
 				{
-					
+					obj = new GoldCoin();
+					offsetHeight = -1.5f;
+					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+					goldCoins.add((GoldCoin) obj);
 				}
 				
 				//Unknown object/pixel color
@@ -172,6 +188,33 @@ public class Level
 	}
 	
 	/**
+	 * This method tells every object in the level to run their update() function
+	 * 
+	 * @param deltaTime
+	 */
+	public void update(float deltaTime)
+	{
+		bunnyHead.update(deltaTime);
+		
+		for(Rock rock: rocks)
+		{
+			rock.update(deltaTime);
+		}
+		
+		for(GoldCoin coin: goldCoins)
+		{
+			coin.update(deltaTime);
+		}
+		
+		for(Feather feather: feathers)
+		{
+			feather.update(deltaTime);
+		}
+		
+		clouds.update(deltaTime);
+	}
+	
+	/**
 	 * Takes all sprites in the batch and renders them
 	 * 
 	 * @param batch
@@ -186,6 +229,21 @@ public class Level
 		{
 			rock.render(batch);			
 		}
+		
+		//Draw coins
+		for(GoldCoin coin: goldCoins)
+		{
+			coin.render(batch);
+		}
+		
+		//Draw Feathers
+		for(Feather feather: feathers)
+		{
+			feather.render(batch);
+		}
+		
+		//Draw Player
+		bunnyHead.render(batch);
 		
 		//Draw Water Overlay
 		waterOverlay.render(batch);
