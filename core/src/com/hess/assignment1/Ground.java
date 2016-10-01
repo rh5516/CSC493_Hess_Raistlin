@@ -37,6 +37,9 @@ public class Ground extends AbstractGameObject
 	public void setLength(int length)
 	{
 		this.length = length;
+		
+		//Update bounding box for collision detetion
+		bounds.set(0,0, dimension.x*length, dimension.y-0.25f);
 	}
 	
 	/**

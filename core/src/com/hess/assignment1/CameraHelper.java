@@ -1,6 +1,5 @@
 package com.hess.assignment1;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
@@ -13,11 +12,11 @@ import com.badlogic.gdx.math.Vector2;
 public class CameraHelper
 {
 	private static final String TAG = CameraHelper.class.getName();
-	private final float MAX_ZOOM_IN = 0.20f;
+	private final float MAX_ZOOM_IN = 0.3f;
 	private final float MAX_ZOOM_OUT = 11.0f;
 	private Vector2 position;
 	private float zoom;
-	private Sprite target;
+	private AbstractGameObject target;
 	
 	/**
 	 * Sets the initial position and zooming factor
@@ -25,7 +24,7 @@ public class CameraHelper
 	public CameraHelper()
 	{
 		position = new Vector2();
-		zoom = 1.5f;
+		zoom = 2.0f;
 	}
 	
 	/**
@@ -33,13 +32,13 @@ public class CameraHelper
 	 */
 	public void update(float deltaTime)
 	{
-		if(!hasTarget())
-		{
-			return;
-		}
+		if(!hasTarget()) return;
 		
-		position.x = target.getX() + target.getOriginX();
-		position.y = target.getY() + target.getOriginY();
+		position.x = target.position.x + target.origin.x;
+		position.y = target.position.y + target.origin.y;
+		
+		//Prevent camera from moving down passed the bottom of level
+		position.y = Math.max(-1.0f, position.y);
 	}
 	
 	/**
@@ -98,7 +97,7 @@ public class CameraHelper
 	 * 
 	 * @param target
 	 */
-	public void setTarget(Sprite target)
+	public void setTarget(AbstractGameObject target)
 	{
 		this.target = target;
 	}
@@ -108,7 +107,7 @@ public class CameraHelper
 	 * 
 	 * @return
 	 */
-	public Sprite getTarget()
+	public AbstractGameObject getTarget()
 	{
 		return target;
 	}
@@ -129,7 +128,7 @@ public class CameraHelper
 	 * @param target
 	 * @return
 	 */
-	public boolean hasTarget(Sprite target)
+	public boolean hasTarget(AbstractGameObject target)
 	{
 		return hasTarget() && this.target.equals(target);
 	}

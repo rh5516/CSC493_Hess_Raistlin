@@ -8,6 +8,9 @@ package com.hess.assignment1;
  */
 public class Constants
 {
+	//Delay after game over
+	public static final float TIME_DELAY_GAME_OVER = 3;
+	
 	//Set visible game world to 5 meters wide and tall
 	public static final float VIEWPORT_WIDTH = 5.0f;
 	public static final float VIEWPORT_HEIGHT = 5.0f;
@@ -26,4 +29,10 @@ public class Constants
 	
 	//Amount of extra lives at level start
 	public static final int LIVES_START = 3;
+	
+	//Duration of feather power-up in seconds
+	public static final float ITEM_STAR_POWERUP_DURATION = 9;
+	
+	//Base value for time until a Rain object can drop again, in seconds
+	public static final float ITEM_RAIN_BASE_TIME = 15;
 }

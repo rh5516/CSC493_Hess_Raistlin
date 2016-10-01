@@ -3,6 +3,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 
 /**
@@ -46,7 +47,7 @@ public class WorldRenderer implements Disposable
 		cameraGUI.setToOrtho(true);	//Flips y-axis
 		cameraGUI.update();
 	}
-
+	
 	/**
 	 * Draws sprites in the SpriteBatch to the screen
 	 */
@@ -78,14 +79,20 @@ public class WorldRenderer implements Disposable
 	{
 		batch.setProjectionMatrix(cameraGUI.combined);
 		batch.begin();
-			//Draw collected rain drops icon and text to top-left corner
+			//Draw collected rain icon and text to top-left corner
 			renderGuiScore(batch);
+			
+			//Draw collected star icon to the top left edge
+			renderGuiStarPowerup(batch);
 			
 			//Draw extra lives icon and text to the top right edge
 			renderGuiExtraLive(batch);
 			
 			//Draw FPS text to bottom right edge
 			renderGuiFpsCounter(batch);
+			
+			//Draw game over text
+			renderGuiGameOverMessage(batch);
 		batch.end();
 	}
 	
@@ -157,7 +164,47 @@ public class WorldRenderer implements Disposable
 	}
 	
 	/**
-	 * This method updates the viewport of the camera based on the window size
+	 * Draws a message on the screen that says "Game Over" when the player is
+	 * out of extra lives
+	 */
+	private void renderGuiGameOverMessage(SpriteBatch batch)
+	{
+		float x = cameraGUI.viewportWidth/2;
+		float y = cameraGUI.viewportHeight/2;
+		if(worldController.isGameOver())
+		{
+			BitmapFont fontGameOver = Assets.instance.fonts.defaultBig;
+			fontGameOver.setColor(1, 0.75f, 0.25f, 1);
+			fontGameOver.draw(batch, "GAME OVER", x, y, 0, Align.center, false);
+			fontGameOver.setColor(1,1,1,1);
+		}
+	}
+	
+	private void renderGuiStarPowerup(SpriteBatch batch)
+	{
+		float x = -15;
+		float y = 30;
+		float timeLeftStar = worldController.level.melonMan.timeLeftStar;
+		
+		if(timeLeftStar > 0)
+		{
+			//Start icon fade in/out if the left power-up time is less than
+			//4 seconds. The fade interval is set to 5 changes per second
+			if(timeLeftStar < 4)
+			{
+				if((int)((timeLeftStar*5) %2) != 0)
+				{
+					batch.setColor(1,1,1, 0.5f);
+				}
+			}
+			batch.draw(Assets.instance.star.star, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
+			batch.setColor(1,1,1,1);
+			Assets.instance.fonts.defaultSmall.draw(batch, "" + (int)timeLeftStar, x+60, y+57);
+		}
+	}
+	
+	/**
+	 * This method updates the viewport of the camera and cameraGUI based on the window size
 	 * 
 	 * @param width
 	 * @param height
