@@ -50,6 +50,7 @@ public class WorldController extends InputAdapter
 	{
 		score = 0;
 		level = new Level(Constants.LEVEL_01);
+		cameraHelper.setTarget(level.melonMan);
 	}
 	
 	/**
