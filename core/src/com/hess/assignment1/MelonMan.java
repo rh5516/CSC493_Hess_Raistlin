@@ -32,7 +32,7 @@ public class MelonMan extends AbstractGameObject
 	 * Initializes the bounding box and physics associated with this object.
 	 * Also initializes the state of the object and other miscellaneous variables
 	 */
-	public void init()
+	private void init()
 	{
 		dimension.set(1,1);
 		regHead = Assets.instance.melonMan.head;

@@ -20,7 +20,7 @@ public class DesktopLauncher
 			settings.maxHeight = 1024;
 			settings.duplicatePadding = false;
 			settings.debug = drawDebugOutline;
-			TexturePacker.process(settings, "assets-raw/images", "../core/assets/images","melonman.pack.atlas");
+			TexturePacker.process(settings, "assets-raw/images", "images","melonman.pack.atlas");
 		}
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		new LwjglApplication(new MelonManMain(), config);

@@ -225,7 +225,7 @@ public class WorldController extends InputAdapter
 				break;
 				
 			case JUMP_RISING:
-				melonMan.position.y = ground.position.y+melonMan.bounds.height+melonMan.origin.y;
+				melonMan.position.y = ground.position.y+melonMan.bounds.height-0.3f;
 				break;
 		}
 	}
