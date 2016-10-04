@@ -1,6 +1,10 @@
-package com.hess.assignment1;
+package objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import game.Assets;
+import utilities.CharacterSkin;
+import utilities.Constants;
+import utilities.GamePreferences;
 
 /**
  * This represents the Bunny's Head which can be controlled by the player
@@ -199,6 +203,9 @@ public class BunnyHead extends AbstractGameObject
 	public void render(SpriteBatch batch)
 	{
 		TextureRegion reg = null;
+		
+		//Apply skin color
+		batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());
 		
 		//Set special color when game object has a feather power-up
 		if(hasFeatherPowerup)

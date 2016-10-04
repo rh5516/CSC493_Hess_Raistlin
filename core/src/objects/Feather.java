@@ -1,6 +1,7 @@
-package com.hess.assignment1;
+package objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import game.Assets;
 
 /**
  * This represents a Feather object. Can be colected and allows the player to

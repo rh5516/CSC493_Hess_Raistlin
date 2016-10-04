@@ -1,10 +1,13 @@
-package com.hess.assignment1;
+package game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
+import utilities.CharacterSkin;
+import utilities.Constants;
+import utilities.GamePreferences;
 
 /**
  * This class is reponsible for drawing assets to the screen
@@ -89,7 +92,7 @@ public class WorldRenderer implements Disposable
 			renderGuiExtraLive(batch);
 			
 			//Draw FPS text to bottom right edge
-			renderGuiFpsCounter(batch);
+			if(GamePreferences.instance.showFpsCounter) renderGuiFpsCounter(batch);
 			
 			//Draw game over text
 			renderGuiGameOverMessage(batch);
@@ -126,6 +129,9 @@ public class WorldRenderer implements Disposable
 			{
 				batch.setColor(0.5f, 0.5f, 0.5f, 0.5f);
 			}
+			//Apply skincolor to lives
+			batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());
+			
 			batch.draw(Assets.instance.bunny.head, x+i*50, y, 50, 50, 120, 100, 0.35f, -0.35f, 0);
 			batch.setColor(1,1,1,1);
 		}

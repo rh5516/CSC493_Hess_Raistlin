@@ -1,7 +1,9 @@
-package com.hess.assignment1;
+package decoration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import game.Assets;
+import objects.AbstractGameObject;
 
 /**
  * This class represents a Mountains game object

@@ -1,7 +1,8 @@
-package com.hess.assignment1;
+package utilities;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import objects.AbstractGameObject;
 
 /**
  * Thsi class is responsible for manipulating the game camera

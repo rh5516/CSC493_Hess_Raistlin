@@ -1,10 +1,18 @@
-package com.hess.assignment1;
-import com.badlogic.gdx.Gdx;
+package game;
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
-import com.hess.assignment1.BunnyHead.JUMP_STATE;
+import gui.MenuScreen;
+import objects.BunnyHead;
+import objects.Feather;
+import objects.GoldCoin;
+import objects.Rock;
+import objects.BunnyHead.JUMP_STATE;
+import utilities.CameraHelper;
+import utilities.Constants;
 
 /**
  * This class is responsible for updating information about the game objects, as well as the camera,
@@ -16,17 +24,19 @@ import com.hess.assignment1.BunnyHead.JUMP_STATE;
 public class WorldController extends InputAdapter
 {
 	private static final String TAG = WorldController.class.getName();
-	public CameraHelper cameraHelper;
-	public Level level;
-	public int lives;
-	public int score;
+	private Game game;
 	private float timeLeftGameOverDelay;
 	//Rectangles for collision detection
 	private Rectangle r1 = new Rectangle();
 	private Rectangle r2 = new Rectangle();
+	public CameraHelper cameraHelper;
+	public Level level;
+	public int lives;
+	public int score;
 	
-	public WorldController()
+	public WorldController(Game game)
 	{
+		this.game = game;
 		init();
 	}
 	
@@ -51,6 +61,15 @@ public class WorldController extends InputAdapter
 		score = 0;
 		level = new Level(Constants.LEVEL_01);
 		cameraHelper.setTarget(level.bunnyHead);
+	}
+	
+	/**
+	 * Takes the player save the state of the world and return to the menu screen
+	 */
+	private void backToMenu()
+	{
+		//Switch to menu screen
+		game.setScreen(new MenuScreen(game));
 	}
 	
 	/**
@@ -169,7 +188,9 @@ public class WorldController extends InputAdapter
 	}
 	
 	/**
-	 * Overrides default input for keyUp so that it resets the game world
+	 * Accepts input which affects the game, not the player.
+	 * Includes resetting the game, toggling camera control, and returning
+	 * to the menu screen
 	 */
 	@Override
 	public boolean keyUp(int keycode)
@@ -186,6 +207,12 @@ public class WorldController extends InputAdapter
 		{
 			cameraHelper.setTarget(cameraHelper.hasTarget() ? null : level.bunnyHead);
 			Gdx.app.debug(TAG, "Camera Follow enabled: "+cameraHelper.hasTarget());
+		}
+		
+		//Back to menu
+		else if(keycode == Keys.ESCAPE || keycode == Keys.BACK)
+		{
+			backToMenu();
 		}
 		
 		return false;
@@ -326,7 +353,7 @@ public class WorldController extends InputAdapter
 			timeLeftGameOverDelay -= deltaTime;
 			if(timeLeftGameOverDelay < 0)
 			{
-				init();
+				backToMenu();
 			}
 		}
 		else

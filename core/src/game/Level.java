@@ -1,8 +1,16 @@
-package com.hess.assignment1;
+package game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import decoration.Clouds;
+import decoration.Mountains;
+import decoration.WaterOverlay;
+import objects.AbstractGameObject;
+import objects.BunnyHead;
+import objects.Feather;
+import objects.GoldCoin;
+import objects.Rock;
 
 /**
  * This class is responsible for reading the level asset and creating and placing
