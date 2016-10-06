@@ -1,6 +1,8 @@
-package com.hess.assignment1;
+package decoration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import game.Assets;
+import objects.AbstractGameObject;
 
 /**
  * This class draws sand dunes in the background

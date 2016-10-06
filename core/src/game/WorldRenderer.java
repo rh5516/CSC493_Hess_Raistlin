@@ -1,10 +1,13 @@
-package com.hess.assignment1;
+package game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
+import utilities.CharacterSkin;
+import utilities.Constants;
+import utilities.GamePreferences;
 
 /**
  * This class is reponsible for drawing assets to the screen
@@ -122,9 +125,10 @@ public class WorldRenderer implements Disposable
 		
 		for(int i = 0; i < Constants.LIVES_START; i++)
 		{
+			batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());
 			if(worldController.lives <= i)
 			{
-				batch.setColor(0.5f, 0.5f, 0.5f, 0.5f);
+				batch.setColor(0.5f, 0.5f, 0.5f, 0.3f);
 			}
 			batch.draw(Assets.instance.melonMan.head, x+i*50, y, 50, 50, 120, 100, 0.35f, -0.35f, 0);
 			batch.setColor(1,1,1,1);

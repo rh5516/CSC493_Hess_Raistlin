@@ -1,4 +1,4 @@
-package com.hess.assignment1;
+package utilities;
 
 /**
  * This class is responsible for providing a single place to store all of the constants used in the game.
@@ -8,6 +8,22 @@ package com.hess.assignment1;
  */
 public class Constants
 {
+	
+	//Atlas for UI
+	public static final String TEXTURE_ATLAS_UI = "images/game-ui-pack.atlas";
+	
+	//Atlas for Menu UI
+	public static final String TEXTURE_ATLAS_LIBGDX_UI = "images/uiskin.atlas";
+	
+	//Location of description file for skins
+	public static final String SKIN_LIBGDX_UI = "images/uiskin.json";
+	
+	//Skin for the Bunny game over the UI
+	public static final String SKIN_MELONMAN_UI = "images/game-ui.json";
+	
+	//File location for preferences
+	public static final String PREFERENCES = "melonman.prefs";
+	
 	//Delay after game over
 	public static final float TIME_DELAY_GAME_OVER = 3;
 	

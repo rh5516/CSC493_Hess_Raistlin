@@ -1,6 +1,10 @@
-package com.hess.assignment1;
+package objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import game.Assets;
+import utilities.CharacterSkin;
+import utilities.Constants;
+import utilities.GamePreferences;
 
 /**
  * This represents MelonMan, the playable character. Can move left and right as well as jump
@@ -201,7 +205,8 @@ public class MelonMan extends AbstractGameObject
 	public void render(SpriteBatch batch)
 	{
 		TextureRegion reg = null;
-		batch.setColor(0.6f, 0.6f, 0.6f, 1.0f);
+		//Apply skin color
+		batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());
 		
 		//Set special color when game object has a star power-up
 		if(hasStar)
@@ -212,6 +217,7 @@ public class MelonMan extends AbstractGameObject
 		//Draw image. If looking right, mirror texture along the y plane
 		reg = regHead;
 		batch.draw(reg.getTexture(), position.x, position.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), viewDirection==VIEW_DIRECTION.RIGHT, false);
+		
 		batch.setColor(1,1,1,1);
 	}
 

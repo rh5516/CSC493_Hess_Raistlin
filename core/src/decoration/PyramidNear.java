@@ -1,47 +1,49 @@
-package com.hess.assignment1;
+package decoration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import game.Assets;
+import objects.AbstractGameObject;
 
 /**
- * This class represents a PyramidFar game object
+ * This class represents a PyramidNear game object
  * 
  * @author Raistlin Hess
  *
  */
-public class PyramidFar extends AbstractGameObject
+public class PyramidNear extends AbstractGameObject
 {
-	private TextureRegion regPyramidFar;
-	private int length;	//This is the length of the level. Determines number of pyramids drawn
+	private TextureRegion regPyramidNear;
+	private int length;	//This represents the number of times Pyramids will be drawn
 	
 	/**
-	 * Sets the length of the PyramidFar to the parameter length and calls init()
+	 * Sets the length of the Mountains to the parameter length and calls init()
 	 * 
 	 * @param length
 	 */
-	public PyramidFar(int length)
+	public PyramidNear(int length)
 	{
 		this.length = length;
 		init();
 	}
 	
 	/**
-	 * Initializes the dimensions of the PyramidFar and its position
+	 * Initializes the dimensions of the Mountains and its position
 	 */
 	private void init()
 	{
-		dimension.set(4,2);
-		regPyramidFar = Assets.instance.levelDecoration.pyramidNear;
+		dimension.set(2.375f,1.125f);
+		regPyramidNear = Assets.instance.levelDecoration.pyramidNear;
 		
 		//Shift pyramid and extend length
-		origin.x = dimension.x/2;
+		origin.x = -dimension.x*2;
 		length += dimension.x*2;
 	}
 	
 	/**
-	 * Draws the PyramidFars at regular x intervals
+	 * Draws the mountains so that they cover the entire background of the level
 	 */
-	private void drawPyramid(SpriteBatch batch, float offsetX, float offsetY)//, float tintColor)
+	private void drawPyramid(SpriteBatch batch, float offsetX, float offsetY)
 	{
 		TextureRegion reg = null;
 		float xRel = dimension.x*offsetX;
@@ -54,18 +56,19 @@ public class PyramidFar extends AbstractGameObject
 		
 		for(int i = 0; i < pyramidLength; i++)
 		{
-			reg = regPyramidFar;
+			reg = regPyramidNear;
 			batch.draw(reg.getTexture(), origin.x+xRel, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
-			xRel += dimension.x*3;
+			xRel += dimension.x*2;//+(pyramidLength/dimension.x);
 		}
 	}
 	
 	/**
-	 * Draws the PyramidFars with a slight dark overlay
+	 * Render the nearby pyramids with very slight color overlay
 	 */
 	@Override
 	public void render(SpriteBatch batch)
 	{
-		drawPyramid(batch, position.x/6, 1.0f);
+		//Distant pyramids (gray)
+		drawPyramid(batch, position.x/6, 0.6f);
 	}
 }

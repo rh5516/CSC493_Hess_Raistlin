@@ -1,10 +1,18 @@
-package com.hess.assignment1;
+package game;
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
-import com.hess.assignment1.MelonMan.JUMP_STATE;
+import gui.MenuScreen;
+import objects.Ground;
+import objects.MelonMan;
+import objects.MelonMan.JUMP_STATE;
+import objects.Rain;
+import objects.Star;
+import utilities.CameraHelper;
+import utilities.Constants;
 
 /**
  * This class is responsible for updating information about the game objects, as well as the camera,
@@ -16,17 +24,19 @@ import com.hess.assignment1.MelonMan.JUMP_STATE;
 public class WorldController extends InputAdapter
 {
 	private static final String TAG = WorldController.class.getName();
-	public CameraHelper cameraHelper;
-	public Level level;
-	public int lives;
-	public int score;
+	private Game game;
 	private float timeLeftGameOverDelay;
 	//Rectangles for collision detection
 	private Rectangle r1 = new Rectangle();
 	private Rectangle r2 = new Rectangle();
-	
-	public WorldController()
+	public CameraHelper cameraHelper;
+	public Level level;
+	public int lives;
+	public int score;
+
+	public WorldController(Game game)
 	{
+		this.game = game;
 		init();
 	}
 	
@@ -51,6 +61,15 @@ public class WorldController extends InputAdapter
 		score = 0;
 		level = new Level(Constants.LEVEL_01);
 		cameraHelper.setTarget(level.melonMan);
+	}
+	
+	/**
+	 * Takes the player save the state of the world and return to the menu screen
+	 */
+	private void backToMenu()
+	{
+		//Switch to menu screen
+		game.setScreen(new MenuScreen(game));
 	}
 	
 	/**
@@ -188,6 +207,12 @@ public class WorldController extends InputAdapter
 			Gdx.app.debug(TAG, "Camera Follow enabled: "+cameraHelper.hasTarget());
 		}
 		
+		//Back to Menu
+		else if(keycode == Keys.ESCAPE || keycode == Keys.BACK)
+		{
+			backToMenu();
+		}
+		
 		return false;
 	}
 	
@@ -199,18 +224,18 @@ public class WorldController extends InputAdapter
 	private void onCollisionMelonManWithGround(Ground ground)
 	{
 		MelonMan melonMan = level.melonMan;
-//		float heightDifference = Math.abs(melonMan.position.y-(ground.position.y+ground.bounds.height-0.25f));
-	
-//		if(heightDifference > 0.4f)
+		float heightDifference = Math.abs(melonMan.position.y-(ground.position.y+ground.bounds.height));
+		
+//		if(heightDifference > 0.25f)
 //		{
 //			boolean hitRightEdge = melonMan.position.x > (ground.position.x+ground.bounds.width/2.0f);
 //			if(hitRightEdge)
 //			{
-//				melonMan.position.x = (melonMan.position.x-ground.position.x+ground.bounds.width);
+//				melonMan.position.x = ground.position.x+ground.bounds.width;
 //			}
 //			else
 //			{
-//				melonMan.position.x = (melonMan.position.x-ground.bounds.x-melonMan.bounds.width);
+//				melonMan.position.x = ground.position.x-melonMan.bounds.width;
 //			}
 //			return;
 //		}
@@ -317,7 +342,7 @@ public class WorldController extends InputAdapter
 	 * 
 	 * @param deltaTime
 	 */
-	public void update (float deltaTime)
+	public void update(float deltaTime)
 	{
 		handleDebugInput(deltaTime);
 		if(isGameOver())
@@ -325,7 +350,7 @@ public class WorldController extends InputAdapter
 			timeLeftGameOverDelay -= deltaTime;
 			if(timeLeftGameOverDelay < 0)
 			{
-				init();
+				backToMenu();
 			}
 		}
 		else

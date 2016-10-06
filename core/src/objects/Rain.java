@@ -1,8 +1,10 @@
-package com.hess.assignment1;
+package objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import game.Assets;
+import utilities.Constants;
 
 /**
  * This class represents a Rain drop object. These will fall at random times and locations

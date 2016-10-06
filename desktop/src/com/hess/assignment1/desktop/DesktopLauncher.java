@@ -1,10 +1,9 @@
 package com.hess.assignment1.desktop;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
-import com.hess.assignment1.MelonManMain;
+import game.MelonManMain;
 
 public class DesktopLauncher
 {
@@ -21,6 +20,7 @@ public class DesktopLauncher
 			settings.duplicatePadding = false;
 			settings.debug = drawDebugOutline;
 			TexturePacker.process(settings, "assets-raw/images", "images","melonman.pack.atlas");
+			TexturePacker.process(settings, "assets-raw/images-ui", "images", "game-ui-pack");
 		}
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		new LwjglApplication(new MelonManMain(), config);

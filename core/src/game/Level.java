@@ -1,9 +1,19 @@
-package com.hess.assignment1;
+package game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import decoration.Clouds;
+import decoration.DesertBackground;
+import decoration.Foreground;
+import decoration.PyramidFar;
+import decoration.PyramidNear;
+import objects.AbstractGameObject;
+import objects.Ground;
+import objects.MelonMan;
+import objects.Rain;
+import objects.Star;
 
 /**
  * This class is responsible for reading the level asset and creating and placing
