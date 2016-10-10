@@ -50,5 +50,5 @@ public class Constants
 	public static final float ITEM_STAR_POWERUP_DURATION = 9;
 	
 	//Base value for time until a Rain object can drop again, in seconds
-	public static final float ITEM_RAIN_BASE_TIME = 15;
+	public static final float ITEM_RAIN_BASE_TIME = 24;
 }

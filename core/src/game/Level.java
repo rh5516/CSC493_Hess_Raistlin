@@ -170,7 +170,7 @@ public class Level
 				else if(BLOCK_TYPE.ITEM_STAR.sameColor(currentPixel))
 				{
 					obj = new Star();
-					offsetHeight = -2.6f;
+					offsetHeight = -2.2f;
 					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
 					stars.add((Star)obj);
 				}
@@ -179,7 +179,7 @@ public class Level
 				else if(BLOCK_TYPE.ITEM_RAIN.sameColor(currentPixel))
 				{
 					Rain drop = new Rain();
-					offsetHeight = -1.5f;
+					offsetHeight = 0;//-1.5f;
 //					drop.position.set(pixelX, baseHeight*drop.dimension.y+offsetHeight);
 					drop.position.set(MathUtils.random(0.0f, levelWidth), 1.5f + MathUtils.random(0.0f, 0.6f)+offsetHeight+drop.dimension.y);
 					drop.setLevelDimensions(levelWidth, levelHeight);
@@ -228,7 +228,7 @@ public class Level
 		}
 		
 		for(Rain rain: rainDrops)
-		{			
+		{
 			rain.update(deltaTime);
 		}
 		

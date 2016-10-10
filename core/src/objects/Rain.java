@@ -57,11 +57,12 @@ public class Rain extends AbstractGameObject
 		//so it can be queued to respawn
 		if(collected || position.y < -11.0f)
 		{
-			Vector2 pos = new Vector2();
-			pos.x += MathUtils.random(0.0f, levelWidth);
-			pos.y += 1.5f;
-			pos.y += MathUtils.random(0.0f, 0.6f);
-			position.set(pos);
+//			Vector2 pos = new Vector2();
+//			pos.x += MathUtils.random(0.0f, levelWidth);
+//			pos.y += 1.5f;
+//			pos.y += MathUtils.random(0.0f, 0.6f);
+			position.set(MathUtils.random(0.0f, levelWidth), 1.5f + MathUtils.random(0.0f, 0.6f)+dimension.y);
+//			position.set(pos);
 			timer -= deltaTime; //Constants.ITEM_RAIN_BASE_TIME - deltaTime;
 			velocity.y = 0.0f;
 		}
