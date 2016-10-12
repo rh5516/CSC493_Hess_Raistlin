@@ -74,6 +74,17 @@ public class Clouds extends AbstractGameObject
 		pos.y += 1.75;		//Base position
 		pos.y += MathUtils.random(0.0f, 0.2f) * (MathUtils.randomBoolean() ? 1 : -1);	//Adds random value to position
 		cloud.position.set(pos);
+		
+		//Speed
+		Vector2 speed = new Vector2();
+		speed.x += 0.5f;	//Base speed
+		
+		//Add random values to speed
+		speed.x += MathUtils.random(0.0f, 0.75f);
+		cloud.terminalVelocity.set(speed);
+		speed.x *= -1;	//Float to the left
+		cloud.velocity.set(speed);
+		
 		return cloud;
 	}
 	
@@ -111,6 +122,23 @@ public class Clouds extends AbstractGameObject
 		{
 			TextureRegion reg = regCloud;
 			batch.draw(reg.getTexture(), position.x+origin.x, position.y+origin.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+		}
+	}
+	
+	@Override
+	public void update(float deltaTime)
+	{
+		for(int i = clouds.size-1; i >= 0; i--)
+		{
+			Cloud cloud = clouds.get(i);
+			cloud.update(deltaTime);
+			if(cloud.position.x < -10)
+			{
+				//If cloud has moved too far left, remove it
+				//and respawn
+				clouds.removeIndex(i);
+				clouds.add(spawnCloud());
+			}
 		}
 	}
 

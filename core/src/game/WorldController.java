@@ -33,6 +33,8 @@ public class WorldController extends InputAdapter
 	public Level level;
 	public int lives;
 	public int score;
+	public float livesVisual;
+	public float scoreVisual;
 	
 	public WorldController(Game game)
 	{
@@ -49,6 +51,7 @@ public class WorldController extends InputAdapter
 		Gdx.input.setInputProcessor(this);
 		cameraHelper = new CameraHelper();
 		lives = Constants.LIVES_START;
+		livesVisual = lives;
 		timeLeftGameOverDelay = 0;
 		initLevel();
 	}
@@ -59,6 +62,7 @@ public class WorldController extends InputAdapter
 	public void initLevel()
 	{
 		score = 0;
+		scoreVisual = score;
 		level = new Level(Constants.LEVEL_01);
 		cameraHelper.setTarget(level.bunnyHead);
 	}
@@ -374,6 +378,21 @@ public class WorldController extends InputAdapter
 			{
 				initLevel();
 			}
+		}
+		
+		//Update mountains' position
+		level.mountains.updateScrollPosition(cameraHelper.getPosition());
+		
+		//Timer for losing a life
+		if(livesVisual > lives)
+		{
+			livesVisual = Math.max(lives, livesVisual-1*deltaTime);
+		}
+		
+		//Timer for changing score
+		if(scoreVisual < score)
+		{
+			scoreVisual = Math.min(score, scoreVisual+250*deltaTime);
 		}
 	}
 }

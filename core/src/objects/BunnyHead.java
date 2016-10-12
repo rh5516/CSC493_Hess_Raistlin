@@ -1,6 +1,8 @@
 package objects;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import game.Assets;
 import utilities.CharacterSkin;
 import utilities.Constants;
@@ -24,6 +26,7 @@ public class BunnyHead extends AbstractGameObject
 	public JUMP_STATE jumpState;
 	public boolean hasFeatherPowerup;
 	public float timeLeftFeatherPowerup;
+	public ParticleEffect dustParticles = new ParticleEffect();
 	
 	public enum VIEW_DIRECTION{LEFT, RIGHT}
 	public enum JUMP_STATE{GROUNDED, FALLING, JUMP_RISING, JUMP_FALLING}
@@ -63,6 +66,9 @@ public class BunnyHead extends AbstractGameObject
 		//Power-ups
 		hasFeatherPowerup = false;
 		timeLeftFeatherPowerup = 0;
+		
+		//Particles
+		dustParticles.load(Gdx.files.internal("particles/dust.pfx"),Gdx.files.internal("particles"));
 	}
 	
 	/**
@@ -142,6 +148,7 @@ public class BunnyHead extends AbstractGameObject
 				setFeatherPowerup(false);
 			}
 		}
+		dustParticles.update(deltaTime);
 	}
 	
 	/**
@@ -157,6 +164,11 @@ public class BunnyHead extends AbstractGameObject
 		{
 			case GROUNDED:
 				jumpState = JUMP_STATE.FALLING;
+				if(velocity.x != 0)
+				{
+					dustParticles.setPosition(position.x+dimension.x/2,position.y);
+					dustParticles.start();
+				}
 				break;
 				
 			case JUMP_RISING:
@@ -190,6 +202,7 @@ public class BunnyHead extends AbstractGameObject
 		//Update y velocity if bunny is not standing on the ground
 		if(jumpState != JUMP_STATE.GROUNDED)
 		{
+			dustParticles.allowCompletion();
 			super.updateMotionY(deltaTime);
 		}
 	}
@@ -212,6 +225,9 @@ public class BunnyHead extends AbstractGameObject
 		{
 			batch.setColor(1, 0.8f, 0, 1.0f);
 		}
+		
+		//Draw Particles
+		dustParticles.draw(batch);
 		
 		//Draw image. If looking left, mirror texture along the y plane
 		reg = regHead;

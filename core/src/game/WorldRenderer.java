@@ -3,6 +3,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import utilities.CharacterSkin;
@@ -108,8 +109,19 @@ public class WorldRenderer implements Disposable
 	{
 		float x = -15;
 		float y = -15;
-		batch.draw(Assets.instance.goldCoin.goldCoin, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
-		Assets.instance.fonts.defaultBig.draw(batch, ""+worldController.score, x+75, y+37);
+		float offsetX = 50;
+		float offsetY = 50;
+		
+		if(worldController.scoreVisual < worldController.score)
+		{
+			long shakeAlpha = System.currentTimeMillis() % 360;
+			float shakeDist = 1.5f;
+			offsetX += MathUtils.sinDeg(shakeAlpha*2.2f)*shakeDist;
+			offsetY += MathUtils.sinDeg(shakeAlpha*2.9f)*shakeDist;
+		}
+		
+		batch.draw(Assets.instance.goldCoin.goldCoin, x, y, offsetX, offsetY, 100, 100, 0.35f, -0.35f, 0);
+		Assets.instance.fonts.defaultBig.draw(batch, ""+(int)worldController.scoreVisual, x+75, y+37);
 	}
 	
 	/**
@@ -125,16 +137,34 @@ public class WorldRenderer implements Disposable
 		
 		for(int i = 0; i < Constants.LIVES_START; i++)
 		{
-			if(worldController.lives <= i)
-			{
-				batch.setColor(0.5f, 0.5f, 0.5f, 0.5f);
-			}
+			float r = CharacterSkin.values()[GamePreferences.instance.charSkin].getColor().r;
+			float g = CharacterSkin.values()[GamePreferences.instance.charSkin].getColor().g;
+			float b = CharacterSkin.values()[GamePreferences.instance.charSkin].getColor().b;
 			//Apply skincolor to lives
 			batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());
 			
+			if(worldController.lives <= i)
+			{
+				batch.setColor(r, g, b, 0.3f);
+			}
+			
+			//Draw lives
 			batch.draw(Assets.instance.bunny.head, x+i*50, y, 50, 50, 120, 100, 0.35f, -0.35f, 0);
-			batch.setColor(1,1,1,1);
+			
 		}
+		
+		//Draw animation for losing a life
+		if(worldController.lives >= 0 && worldController.livesVisual > worldController.lives)
+		{
+			int j = worldController.lives;
+			float alphaColor = Math.max(0, worldController.livesVisual-worldController.lives-0.5f);
+			float alphaScale = 0.35f*(2+worldController.lives-worldController.livesVisual)*2;
+			float alphaRotate = -45*alphaColor;
+			batch.setColor(1.0f, 0.7f, 0.7f, alphaColor);
+			batch.draw(Assets.instance.bunny.head, x+j*50, y, 50, 50, 120, 100, alphaScale, -alphaScale, alphaRotate);
+		}
+		
+		batch.setColor(1,1,1,1);
 	}
 	
 	/**

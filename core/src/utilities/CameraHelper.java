@@ -18,6 +18,7 @@ public class CameraHelper
 	private Vector2 position;
 	private float zoom;
 	private AbstractGameObject target;
+	private final float FOLLOW_SPEED = 4.0f;
 	
 	/**
 	 * Sets the initial position and zooming factor
@@ -35,8 +36,13 @@ public class CameraHelper
 	{
 		if(!hasTarget()) return;
 		
-		position.x = target.position.x + target.origin.x;
-		position.y = target.position.y + target.origin.y;
+		//Move cameraPosition's x to origin of target
+		Vector2 cameraPos = new Vector2();
+		cameraPos.x = target.position.x+target.origin.x;
+		cameraPos.y = target.position.y;
+		
+		//Linear interpretation to smoothen camera movement
+		position.lerp(cameraPos, FOLLOW_SPEED*deltaTime);
 		
 		//Prevent camera from moving down passed the water
 		position.y = Math.max(-1.0f, position.y);
