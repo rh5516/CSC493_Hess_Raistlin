@@ -20,6 +20,7 @@ public class Clouds extends AbstractGameObject
 	private float length;
 	private Array<TextureRegion> regClouds;
 	private Array<Cloud> clouds;
+	float sinVal;
 	
 	/**
 	 * Sets the Clouds length to the parameter length
@@ -38,6 +39,7 @@ public class Clouds extends AbstractGameObject
 	 */
 	private void init()
 	{
+		sinVal = 1.0f;
 		dimension.set(3.0f, 1.5f);
 		regClouds = new Array<TextureRegion>();
 		regClouds.add(Assets.instance.levelDecoration.cloud01);
@@ -52,6 +54,7 @@ public class Clouds extends AbstractGameObject
 		{
 			Cloud cloud = spawnCloud();
 			cloud.position.x = i*distFac;
+			cloud.rand = (float)Math.sin(MathUtils.random(-0.5f, 0.5f))/100;
 			clouds.add(cloud);
 		}
 	}
@@ -74,6 +77,7 @@ public class Clouds extends AbstractGameObject
 		pos.y += 3.0f;		//Base position
 		pos.y += MathUtils.random(0.0f, 0.8f) * (MathUtils.randomBoolean() ? 1 : -1);	//Adds random value to position
 		cloud.position.set(pos);
+		
 		return cloud;
 	}
 	
@@ -98,6 +102,7 @@ public class Clouds extends AbstractGameObject
 	private class Cloud extends AbstractGameObject
 	{
 		private TextureRegion regCloud;
+		float rand;
 		
 		public Cloud(){}
 		
@@ -111,6 +116,26 @@ public class Clouds extends AbstractGameObject
 		{
 			TextureRegion reg = regCloud;
 			batch.draw(reg.getTexture(), position.x+origin.x, position.y+origin.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+		}
+	}
+	
+	/**
+	 * Allow clouds to move slightly
+	 */
+	@Override
+	public void update(float deltaTime)
+	{
+		sinVal += 0.01f;
+		float sin = (float)(Math.sin(sinVal)%(sinVal))/1000;
+		
+		for(int i = clouds.size-1; i >= 0; i--)
+		{
+			
+			Cloud cloud = clouds.get(i);
+			float tmp = cloud.position.x;
+			cloud.position.x += sin*4 + cloud.rand;
+			cloud.update(deltaTime);
+//			cloud.position.x = tmp;
 		}
 	}
 }

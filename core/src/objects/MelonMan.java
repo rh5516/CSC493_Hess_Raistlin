@@ -1,4 +1,5 @@
 package objects;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import game.Assets;
@@ -205,6 +206,7 @@ public class MelonMan extends AbstractGameObject
 	public void render(SpriteBatch batch)
 	{
 		TextureRegion reg = null;
+		
 		//Apply skin color
 		batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());
 		

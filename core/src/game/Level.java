@@ -1,6 +1,7 @@
 package game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -39,6 +40,10 @@ public class Level
 	public float sinVal;
 	public int levelWidth;
 	public int levelHeight;
+	public ParticleEffect sandstormParticles = new ParticleEffect();
+	public ParticleEffect sandstormParticles2 = new ParticleEffect();
+	public ParticleEffect sandstormParticles3 = new ParticleEffect();
+	public ParticleEffect sandstormParticles4 = new ParticleEffect();
 	
 	/**
 	 * This assigns different color values to unique game objects
@@ -114,6 +119,16 @@ public class Level
 		foreground = new Array<Foreground>();
 		rainDrops = new Array<Rain>();
 		stars = new Array<Star>();
+		
+		//Particles
+		sandstormParticles.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles2.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles3.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles4.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles.setPosition(.0f, 8.0f);
+		sandstormParticles2.setPosition(20.0f, 8.0f);
+		sandstormParticles3.setPosition(40.0f, 8.0f);
+		sandstormParticles4.setPosition(60.0f, 8.0f);
 		
 		//Load image file that represents level data
 		Pixmap pixmap = new Pixmap(Gdx.files.internal(filename));
@@ -248,6 +263,12 @@ public class Level
 		}
 		
 		clouds.update(deltaTime);
+		
+		//Update particles
+		sandstormParticles.update(deltaTime);
+		sandstormParticles2.update(deltaTime);
+		sandstormParticles3.update(deltaTime);
+		sandstormParticles4.update(deltaTime);
 	}
 	
 	/**
@@ -331,5 +352,11 @@ public class Level
 		
 		//Draw Clouds
 		clouds.render(batch);
+		
+		//Draw sandstorm
+		sandstormParticles.draw(batch);
+		sandstormParticles2.draw(batch);
+		sandstormParticles3.draw(batch);
+		sandstormParticles4.draw(batch);
 	}
 }

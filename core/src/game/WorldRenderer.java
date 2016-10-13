@@ -98,7 +98,7 @@ public class WorldRenderer implements Disposable
 			renderGuiGameOverMessage(batch);
 		batch.end();
 	}
-	
+
 	/**
 	 * This is responsible for rendering the score in the GUI
 	 * 

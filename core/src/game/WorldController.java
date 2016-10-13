@@ -64,6 +64,15 @@ public class WorldController extends InputAdapter
 	}
 	
 	/**
+	 * When the player dies, reset his position and the camera, but not his score
+	 */
+	public void onDeath()
+	{
+		level = new Level(Constants.LEVEL_01);
+		cameraHelper.setTarget(level.melonMan);
+	}
+	
+	/**
 	 * Takes the player save the state of the world and return to the menu screen
 	 */
 	private void backToMenu()
@@ -172,7 +181,7 @@ public class WorldController extends InputAdapter
 			}
 			if(Gdx.input.isKeyPressed(Keys.SLASH))
 			{
-				cameraHelper.setZoom(1.5f);
+				cameraHelper.setZoom(2.0f);
 			}
 		}
 	}
@@ -226,19 +235,19 @@ public class WorldController extends InputAdapter
 		MelonMan melonMan = level.melonMan;
 		float heightDifference = Math.abs(melonMan.position.y-(ground.position.y+ground.bounds.height));
 		
-//		if(heightDifference > 0.25f)
-//		{
-//			boolean hitRightEdge = melonMan.position.x > (ground.position.x+ground.bounds.width/2.0f);
-//			if(hitRightEdge)
-//			{
-//				melonMan.position.x = ground.position.x+ground.bounds.width;
-//			}
-//			else
-//			{
-//				melonMan.position.x = ground.position.x-melonMan.bounds.width;
-//			}
-//			return;
-//		}
+		if(heightDifference > 0.60f)
+		{
+			boolean hitRightEdge = melonMan.position.x > (ground.position.x+ground.bounds.width/2.0f);
+			if(hitRightEdge)
+			{
+				melonMan.position.x = ground.position.x+ground.bounds.width;
+			}
+			else
+			{
+				melonMan.position.x = ground.position.x-melonMan.bounds.width;
+			}
+			return;
+		}
 		
 		switch(melonMan.jumpState)
 		{
@@ -369,8 +378,10 @@ public class WorldController extends InputAdapter
 			}
 			else
 			{
-				initLevel();
+				onDeath();
 			}
 		}
+		level.pyramidFar.updateScrollPosition(cameraHelper.getPosition());
+		level.pyramidNear.updateScrollPosition(cameraHelper.getPosition());
 	}
 }

@@ -2,6 +2,7 @@ package decoration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import game.Assets;
 import objects.AbstractGameObject;
 
@@ -46,20 +47,32 @@ public class PyramidNear extends AbstractGameObject
 	private void drawPyramid(SpriteBatch batch, float offsetX, float offsetY)
 	{
 		TextureRegion reg = null;
+		float parallaxSpeedX = 0.4f;
 		float xRel = dimension.x*offsetX;
 		float yRel = dimension.y*offsetY;
 		
 		//Pyramids span the whole level
 		int pyramidLength = 0;
-		pyramidLength += MathUtils.ceil(length/ (2*dimension.x));
-		pyramidLength += MathUtils.ceil(0.5f+offsetX);
+//		pyramidLength += MathUtils.ceil(length/ (2*dimension.x));
+		pyramidLength += MathUtils.ceil(length/ (2*dimension.x)*(1-parallaxSpeedX));
+//		pyramidLength += MathUtils.ceil(0.5f+offsetX);
 		
 		for(int i = 0; i < pyramidLength; i++)
 		{
 			reg = regPyramidNear;
-			batch.draw(reg.getTexture(), origin.x+xRel, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
-			xRel += dimension.x*2;//+(pyramidLength/dimension.x);
+			batch.draw(reg.getTexture(), origin.x+xRel*parallaxSpeedX, position.y+origin.y+yRel, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+			xRel += dimension.x*pyramidLength;//+(pyramidLength/dimension.x);
 		}
+	}
+	
+	/**
+	 * Update the Pyramid's x position based on the camera's
+	 * 
+	 * @param camPosition
+	 */
+	public void updateScrollPosition(Vector2 camPosition)
+	{
+		position.set(camPosition.x, position.y);
 	}
 	
 	/**
@@ -68,7 +81,6 @@ public class PyramidNear extends AbstractGameObject
 	@Override
 	public void render(SpriteBatch batch)
 	{
-		//Distant pyramids (gray)
 		drawPyramid(batch, position.x/6, 0.6f);
 	}
 }
