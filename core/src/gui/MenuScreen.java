@@ -118,8 +118,8 @@ public class MenuScreen extends AbstractGameScreen
 	private void onSaveClicked()
 	{
 		saveSettings();
-		onCancelClicked();
 		AudioManager.instance.onSettingsUpdated();
+		onCancelClicked();
 	}
 	
 	/**
@@ -127,10 +127,10 @@ public class MenuScreen extends AbstractGameScreen
 	 */
 	private void onCancelClicked()
 	{
+		AudioManager.instance.onSettingsUpdated();
 		btnMenuPlay.setVisible(true);
 		btnMenuOptions.setVisible(true);
 		winOptions.setVisible(false);
-		AudioManager.instance.onSettingsUpdated();
 	}
 	
 	/**
@@ -375,7 +375,7 @@ public class MenuScreen extends AbstractGameScreen
 		
 		// Checkbox "Show FPS Counter"
 		chkShowFpsCounter = new CheckBox("", skinLibgdx);
-		tbl.add(new Label("Show FPS COutner", skinLibgdx));
+		tbl.add(new Label("Show FPS Coutner", skinLibgdx));
 		tbl.add(chkShowFpsCounter);
 		tbl.row();
 		
@@ -477,7 +477,7 @@ public class MenuScreen extends AbstractGameScreen
 		}
 		stage.act(deltaTime);
 		stage.draw();
-		stage.setDebugAll(true);
+//		stage.setDebugAll(true);
 	}
 
 	/**
