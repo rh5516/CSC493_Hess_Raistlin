@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import game.Assets;
+import utilities.AudioManager;
 import utilities.CharacterSkin;
 import utilities.Constants;
 import utilities.GamePreferences;
@@ -61,7 +62,6 @@ public class MenuScreen extends AbstractGameScreen
 	private final float DEBUG_REBUILD_INTERVAL = 5.0f;
 	private boolean debugEnabled = false;
 	private float debugRebuildStage;
-	
 	
 	public MenuScreen(Game game)
 	{
@@ -119,6 +119,7 @@ public class MenuScreen extends AbstractGameScreen
 	{
 		saveSettings();
 		onCancelClicked();
+		AudioManager.instance.onSettingsUpdated();
 	}
 	
 	/**
@@ -129,6 +130,7 @@ public class MenuScreen extends AbstractGameScreen
 		btnMenuPlay.setVisible(true);
 		btnMenuOptions.setVisible(true);
 		winOptions.setVisible(false);
+		AudioManager.instance.onSettingsUpdated();
 	}
 	
 	/**
@@ -453,6 +455,7 @@ public class MenuScreen extends AbstractGameScreen
 		btnMenuOptions.setVisible(false);
 		winOptions.setVisible(true);
 	}
+	
 	
 	/**
 	 * Displays a nice image for the menu screen.
