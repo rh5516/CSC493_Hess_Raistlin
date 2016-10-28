@@ -1,8 +1,8 @@
 package objects;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import game.Assets;
+import utilities.AudioManager;
 import utilities.CharacterSkin;
 import utilities.Constants;
 import utilities.GamePreferences;
@@ -78,6 +78,7 @@ public class MelonMan extends AbstractGameObject
 				if(jumpKeyPressed)
 				{
 					//Start counting jump time from the beginning
+					AudioManager.instance.play(Assets.instance.sounds.jump);
 					timeJumping = 0;
 					jumpState = JUMP_STATE.JUMP_RISING;
 				}

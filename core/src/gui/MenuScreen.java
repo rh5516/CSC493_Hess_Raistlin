@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import game.Assets;
+import utilities.AudioManager;
 import utilities.CharacterSkin;
 import utilities.Constants;
 import utilities.GamePreferences;
@@ -43,7 +44,7 @@ public class MenuScreen extends AbstractGameScreen
 	private Image imgLogo;
 	private Image imgInfo;
 	private Image imgCoins;
-	private Image imgMelonMan;
+	private Image imgBunny;
 	private Button btnMenuPlay;
 	private Button btnMenuOptions;
 	//Options
@@ -61,7 +62,6 @@ public class MenuScreen extends AbstractGameScreen
 	private final float DEBUG_REBUILD_INTERVAL = 5.0f;
 	private boolean debugEnabled = false;
 	private float debugRebuildStage;
-	
 	
 	public MenuScreen(Game game)
 	{
@@ -118,6 +118,7 @@ public class MenuScreen extends AbstractGameScreen
 	private void onSaveClicked()
 	{
 		saveSettings();
+		AudioManager.instance.onSettingsUpdated();
 		onCancelClicked();
 	}
 	
@@ -126,6 +127,7 @@ public class MenuScreen extends AbstractGameScreen
 	 */
 	private void onCancelClicked()
 	{
+		AudioManager.instance.onSettingsUpdated();
 		btnMenuPlay.setVisible(true);
 		btnMenuOptions.setVisible(true);
 		winOptions.setVisible(false);
@@ -185,9 +187,9 @@ public class MenuScreen extends AbstractGameScreen
 		imgCoins.setPosition(135, 80);
 		
 		// + Bunny
-		imgMelonMan = new Image(skinMelonMan, "bunny");
-		layer.addActor(imgMelonMan);
-		imgMelonMan.setPosition(355, 40);
+		imgBunny = new Image(skinMelonMan, "bunny");
+		layer.addActor(imgBunny);
+		imgBunny.setPosition(355, 40);
 		
 		return layer;
 	}
@@ -373,7 +375,7 @@ public class MenuScreen extends AbstractGameScreen
 		
 		// Checkbox "Show FPS Counter"
 		chkShowFpsCounter = new CheckBox("", skinLibgdx);
-		tbl.add(new Label("Show FPS COutner", skinLibgdx));
+		tbl.add(new Label("Show FPS Coutner", skinLibgdx));
 		tbl.add(chkShowFpsCounter);
 		tbl.row();
 		
@@ -453,6 +455,7 @@ public class MenuScreen extends AbstractGameScreen
 		btnMenuOptions.setVisible(false);
 		winOptions.setVisible(true);
 	}
+	
 	
 	/**
 	 * Displays a nice image for the menu screen.

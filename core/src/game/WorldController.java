@@ -11,6 +11,7 @@ import objects.MelonMan;
 import objects.MelonMan.JUMP_STATE;
 import objects.Rain;
 import objects.Star;
+import utilities.AudioManager;
 import utilities.CameraHelper;
 import utilities.Constants;
 
@@ -33,6 +34,8 @@ public class WorldController extends InputAdapter
 	public Level level;
 	public int lives;
 	public int score;
+	public float livesVisual;
+	public float scoreVisual;
 
 	public WorldController(Game game)
 	{
@@ -59,6 +62,7 @@ public class WorldController extends InputAdapter
 	public void initLevel()
 	{
 		score = 0;
+		scoreVisual = score;
 		level = new Level(Constants.LEVEL_01);
 		cameraHelper.setTarget(level.melonMan);
 	}
@@ -273,6 +277,7 @@ public class WorldController extends InputAdapter
 	private void onCollisionMelonManWithRain(Rain rainDrop)
 	{
 		rainDrop.collected = true;
+		AudioManager.instance.play(Assets.instance.sounds.pickupRain);
 		score += rainDrop.getScore();
 		Gdx.app.log(TAG, "Rain collected");
 	}
@@ -285,6 +290,7 @@ public class WorldController extends InputAdapter
 	private void onCollisionMelonManWithStar(Star star)
 	{
 		star.collected = true;
+		AudioManager.instance.play(Assets.instance.sounds.pickupStar);
 		score += star.getScore();
 		level.melonMan.setStarPowerup(true);
 	}
@@ -371,6 +377,7 @@ public class WorldController extends InputAdapter
 		cameraHelper.update(deltaTime);
 		if(!isGameOver() && isPlayerUnderGround())
 		{
+			AudioManager.instance.play(Assets.instance.sounds.liveLost);
 			lives--;
 			if(isGameOver())
 			{
@@ -383,5 +390,17 @@ public class WorldController extends InputAdapter
 		}
 		level.pyramidFar.updateScrollPosition(cameraHelper.getPosition());
 		level.pyramidNear.updateScrollPosition(cameraHelper.getPosition());
+		
+		//Timer for losing a life
+		if(livesVisual > lives)
+		{
+			livesVisual = Math.max(lives, livesVisual-1*deltaTime);
+		}
+		
+		//Timer for changing score
+		if(scoreVisual < score)
+		{
+			scoreVisual = Math.min(score, scoreVisual+250*deltaTime);
+		}
 	}
 }

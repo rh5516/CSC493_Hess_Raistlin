@@ -3,12 +3,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Disposable;
+
 import utilities.Constants;
 
 /**
@@ -28,6 +31,9 @@ public class Assets implements Disposable, AssetErrorListener
 	public AssetRain rain;
 	public AssetStar star;
 	public AssetLevelDecoration levelDecoration;
+	public AssetSounds sounds;
+	public AssetMusic music;
+	
 	private Assets(){}
 	
 	/**
@@ -35,9 +41,24 @@ public class Assets implements Disposable, AssetErrorListener
 	 */
 	public void init(AssetManager assetManager)
 	{
-		this.assetManager = assetManager;
+this.assetManager = assetManager;
+		
+		//Set asset manager error handler
 		assetManager.setErrorListener(this);
+		
+		//Load texture atlas
 		assetManager.load(Constants.TEXTURE_ATLAS_OBJECTS,TextureAtlas.class);
+		
+		//Load sounds
+		assetManager.load("sounds/jump.wav", Sound.class);
+		assetManager.load("sounds/pickup_rain.wav", Sound.class);
+		assetManager.load("sounds/pickup_star.wav", Sound.class);
+		assetManager.load("sounds/live_lost.wav", Sound.class);
+		
+		//Load music
+		assetManager.load("music/desert_bgm.mp3", Music.class);
+		
+		//Start loading assets and wait until finished
 		assetManager.finishLoading();
 		Gdx.app.debug(TAG, "# of assets loaded: "+assetManager.getAssetNames().size);
 		for(String a: assetManager.getAssetNames())
@@ -45,18 +66,22 @@ public class Assets implements Disposable, AssetErrorListener
 			Gdx.app.debug(TAG, "asset: "+a);
 		}
 		
+		//Enable texture filtering for pixel smoothing
 		TextureAtlas atlas = assetManager.get(Constants.TEXTURE_ATLAS_OBJECTS);
 		for(Texture t: atlas.getTextures())
 		{
 			t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		}
 		
+		//Create game resource objects
 		fonts = new AssetFonts();
 		melonMan = new AssetMelonMan(atlas);
 		ground = new AssetGround(atlas);
 		rain = new AssetRain(atlas);
 		star = new AssetStar(atlas);
 		levelDecoration = new AssetLevelDecoration(atlas);
+		sounds = new AssetSounds(assetManager);
+		music = new AssetMusic(assetManager);
 	}
 
 	/**
@@ -191,6 +216,46 @@ public class Assets implements Disposable, AssetErrorListener
 			defaultSmall.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			defaultNormal.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 			defaultBig.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		}
+	}
+	
+	/**
+	 * This class attaches all of the sound effects for the game to an instance
+	 * variable for easy calling and manipulation
+	 * 
+	 * @author Raistlin Hess
+	 *
+	 */
+	public class AssetSounds
+	{
+		public final Sound jump;
+		public final Sound pickupRain;
+		public final Sound pickupStar;
+		public final Sound liveLost;
+		
+		public AssetSounds(AssetManager am)
+		{
+			jump = am.get("sounds/jump.wav", Sound.class);
+			pickupRain = am.get("sounds/pickup_rain.wav", Sound.class);
+			pickupStar = am.get("sounds/pickup_star.wav", Sound.class);
+			liveLost = am.get("sounds/live_lost.wav", Sound.class);
+		}
+	}
+	
+	/**
+	 * This class attaches all of the music for the game to an instance
+	 * variable for easy calling and manipulation
+	 * 
+	 * @author Raistlin Hess
+	 *
+	 */
+	public class AssetMusic
+	{
+		public final Music song01;
+		
+		public AssetMusic(AssetManager am)
+		{
+			song01 = am.get("music/desert_bgm.mp3", Music.class);
 		}
 	}
 }
