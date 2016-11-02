@@ -8,7 +8,9 @@ import decoration.Mountains;
 import decoration.WaterOverlay;
 import objects.AbstractGameObject;
 import objects.BunnyHead;
+import objects.Carrot;
 import objects.Feather;
+import objects.Goal;
 import objects.GoldCoin;
 import objects.Rock;
 
@@ -23,10 +25,12 @@ public class Level
 {
 	public static final String TAG = Level.class.getName();
 	//Objects
-	public Array<Rock> rocks;
+	public Goal goal;
 	public BunnyHead bunnyHead;
+	public Array<Rock> rocks;
 	public Array<GoldCoin> goldCoins;
 	public Array<Feather> feathers;
+	public Array<Carrot> carrots;
 	//Decoration
 	public Clouds clouds;
 	public Mountains mountains;
@@ -41,7 +45,8 @@ public class Level
 		ROCK(0,255,0),						//Green
 		PLAYER_SPAWNPOINT(255,255,255),		//White
 		ITEM_FEATHER(255,0,255),			//Purple
-		ITEM_GOLD_COIN(255,255,0);			//Yellow
+		ITEM_GOLD_COIN(255,255,0),			//Yellow
+		GOAL(255,0,0);						//Red
 		
 		private int color;
 		/**
@@ -103,6 +108,7 @@ public class Level
 		rocks = new Array<Rock>();
 		goldCoins = new Array<GoldCoin>();
 		feathers = new Array<Feather>();
+		carrots = new Array<Carrot>();
 		
 		//Load image file that represents level data
 		Pixmap pixmap = new Pixmap(Gdx.files.internal(filename));
@@ -169,6 +175,15 @@ public class Level
 					goldCoins.add((GoldCoin) obj);
 				}
 				
+				//Goal
+				else if(BLOCK_TYPE.GOAL.sameColor(currentPixel))
+				{
+					obj = new Goal();
+					offsetHeight = -7.0f;
+					obj.position.set(pixelX, baseHeight+offsetHeight);
+					goal = (Goal)obj;
+				}
+				
 				//Unknown object/pixel color
 				else
 				{
@@ -219,6 +234,11 @@ public class Level
 			feather.update(deltaTime);
 		}
 		
+		for(Carrot carrot: carrots)
+		{
+			carrot.update(deltaTime);
+		}
+		
 		clouds.update(deltaTime);
 	}
 	
@@ -231,6 +251,9 @@ public class Level
 	{
 		//Draw Mountains
 		mountains.render(batch);
+		
+		//Draw Goal
+		goal.render(batch);
 		
 		//Draw Rocks
 		for(Rock rock: rocks)
@@ -248,6 +271,12 @@ public class Level
 		for(Feather feather: feathers)
 		{
 			feather.render(batch);
+		}
+		
+		//Draw Carrots
+		for(Carrot carrot: carrots)
+		{
+			carrot.render(batch);
 		}
 		
 		//Draw Player

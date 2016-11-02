@@ -166,6 +166,13 @@ public class Assets implements Disposable, AssetErrorListener
 		}
 	}
 	
+	/**
+	 * This class loads images from the atlas and stores them in instance variables.
+	 * These are all assets that are part of the background
+	 * 
+	 * @author Raistlin Hess
+	 *
+	 */
 	public class AssetLevelDecoration
 	{
 		public final AtlasRegion cloud01;
@@ -174,6 +181,9 @@ public class Assets implements Disposable, AssetErrorListener
 		public final AtlasRegion mountainLeft;
 		public final AtlasRegion mountainRight;
 		public final AtlasRegion waterOverlay;
+		public final AtlasRegion carrot;
+		public final AtlasRegion goal;
+		
 		public AssetLevelDecoration(TextureAtlas atlas)
 		{
 			cloud01 = atlas.findRegion("cloud01");
@@ -182,6 +192,8 @@ public class Assets implements Disposable, AssetErrorListener
 			mountainLeft = atlas.findRegion("mountain_left");
 			mountainRight = atlas.findRegion("mountain_right");
 			waterOverlay = atlas.findRegion("water_overlay");
+			carrot = atlas.findRegion("carrot");
+			goal = atlas.findRegion("goal");
 		}
 	}
 	

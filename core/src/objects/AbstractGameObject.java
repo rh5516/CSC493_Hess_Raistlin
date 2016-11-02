@@ -3,6 +3,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 
 /**
  * Provides the framework for what a game object is
@@ -21,6 +22,7 @@ public abstract class AbstractGameObject
 	public Vector2 friction;			//0 = no friction, meaning velocity doesn't decrease
 	public Vector2 acceleration;		//constant acceleration in m/s^2
 	public Rectangle bounds;			//describes physical body for collision detection
+	public Body body;
 	public float rotation;
 	
 	/**
@@ -47,11 +49,19 @@ public abstract class AbstractGameObject
 	 */
 	public void update(float deltaTime)
 	{
-		updateMotionX(deltaTime);
-		updateMotionY(deltaTime);
-		//Move to new posiiton
-		position.x += velocity.x*deltaTime;
-		position.y += velocity.y*deltaTime;
+		if(body == null)
+		{
+			updateMotionX(deltaTime);
+			updateMotionY(deltaTime);
+			//Move to new posiiton
+			position.x += velocity.x*deltaTime;
+			position.y += velocity.y*deltaTime;
+		}
+		else
+		{
+			position.set(body.getPosition());
+			rotation = body.getAngle()*MathUtils.radiansToDegrees;
+		}
 	}
 	
 	/**
