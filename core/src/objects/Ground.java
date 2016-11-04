@@ -25,7 +25,7 @@ public class Ground extends AbstractGameObject
 	 */
 	private void init()
 	{
-		dimension.set(1.01f,1);
+		dimension.set(1,1);
 		regEdge = Assets.instance.ground.edge;
 		
 		//Start length of this rock
@@ -58,7 +58,14 @@ public class Ground extends AbstractGameObject
 	public void render(SpriteBatch batch)
 	{
 		TextureRegion reg = null;
+		float relX = 0;
+		
 		reg = regEdge;
-		batch.draw(reg.getTexture(), position.x, position.y, origin.x/*+dimension.x/8*/, origin.y, dimension.x/*/4*/, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+		for(int i = 0; i < length; i++)
+		{
+			batch.draw(reg.getTexture(), position.x+relX, position.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+			relX += dimension.x;
+		}
+//		batch.draw(reg.getTexture(), position.x, position.y, origin.x/*+dimension.x/8*/, origin.y, dimension.x/*/4*/, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
 	}
 }

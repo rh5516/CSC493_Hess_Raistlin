@@ -40,8 +40,9 @@ public class Constants
 	//Location of description file for texture atlas
 	public static final String TEXTURE_ATLAS_OBJECTS = "images/melonman.pack.atlas";
 	
-	//Location of image file fro Level 1
+	//Directory to each level's asset
 	public static final String LEVEL_01 = "levels/level_01.png";
+	public static final String LEVEL_02 = "levels/level_02.png";
 	
 	//Amount of extra lives at level start
 	public static final int LIVES_START = 3;
@@ -49,6 +50,6 @@ public class Constants
 	//Duration of feather power-up in seconds
 	public static final float ITEM_STAR_POWERUP_DURATION = 9;
 	
-	//Base value for time until a Rain object can drop again, in seconds
-	public static final float ITEM_RAIN_BASE_TIME = 24;
+	//Used for random distance from player that rain will spawn
+	public static final float RAIN_SPAWN_RADIUS = 7.0f;
 }

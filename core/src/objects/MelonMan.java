@@ -17,16 +17,11 @@ import utilities.GamePreferences;
 public class MelonMan extends AbstractGameObject
 {
 	public static final String TAG = MelonMan.class.getName();
-	private final float JUMP_TIME_MAX = 0.6f;
-	private final float JUMP_TIME_MIN = 0.1f;
 	private TextureRegion regHead;
 	public VIEW_DIRECTION viewDirection;
-	public float timeJumping;
-	public JUMP_STATE jumpState;
 	public boolean hasStar;
 	public float timeLeftStar;
 	public enum VIEW_DIRECTION{LEFT, RIGHT}
-	public enum JUMP_STATE{GROUNDED, FALLING, JUMP_RISING, JUMP_FALLING}
 
 	public MelonMan()
 	{
@@ -49,54 +44,18 @@ public class MelonMan extends AbstractGameObject
 		bounds.set(0,0,dimension.x,dimension.y);
 		
 		//Set physics values
-		terminalVelocity.set(4.0f, 4.0f);
-		friction.set(12.0f, 0.0f);
-		acceleration.set(0.0f, -40.0f);
+		terminalVelocity.set(5.0f, 5.0f);
+		acceleration.set(14.0f, 12.0f);
+		friction = 2.0f;
 		
 		//View direction
 		viewDirection = VIEW_DIRECTION.RIGHT;
-		
-		//Jump state
-		jumpState = JUMP_STATE.FALLING;
-		timeJumping = 0;
 		
 		//Power-ups
 		hasStar = false;
 		timeLeftStar = 0;
 	}
 
-	/**
-	 * This handles state changes for this object whenever the jumpKey is pressed
-	 * 
-	 * @param jumpKeyPressed
-	 */
-	public void setJumping(boolean jumpKeyPressed)
-	{
-		switch(jumpState)
-		{
-			case GROUNDED:	//Character is standing on a platform
-				if(jumpKeyPressed)
-				{
-					//Start counting jump time from the beginning
-					AudioManager.instance.play(Assets.instance.sounds.jump);
-					timeJumping = 0;
-					jumpState = JUMP_STATE.JUMP_RISING;
-				}
-				break;
-				
-			case JUMP_RISING:	//Rising in the air
-				if(!jumpKeyPressed)
-				{
-					jumpState = JUMP_STATE.JUMP_FALLING;
-				}
-				break;
-				
-			case FALLING:		//Falling down
-			case JUMP_FALLING:	//Falling down after a jump
-				break;
-		}
-	}
-	
 	/**
 	 * This applied the star's powerup effect to this object
 	 * 
@@ -108,6 +67,9 @@ public class MelonMan extends AbstractGameObject
 		if(pickedUp)
 		{
 			timeLeftStar = Constants.ITEM_STAR_POWERUP_DURATION;
+			terminalVelocity.set(8.0f, 5.0f);
+			acceleration.set(22.0f, 12.0f);
+			friction = 5.0f;
 		}
 	}
 	
@@ -123,16 +85,19 @@ public class MelonMan extends AbstractGameObject
 	public void update(float deltaTime)
 	{
 		super.update(deltaTime);
-		//Updates the viewing direction of the MelonMan based on it's x velocity
-		if(velocity.x != 0)
+		
+		//Limit velocity to terminal
+		float maxX;
+		if(viewDirection == VIEW_DIRECTION.LEFT)
 		{
-			viewDirection = velocity.x < 0 ? VIEW_DIRECTION.LEFT : VIEW_DIRECTION.RIGHT;
-			if(hasStar)
-			{
-				terminalVelocity.x = 8.0f;
-				friction.set(24.0f, 0.0f);
-			}
+			maxX = Math.max(body.getLinearVelocity().x, -terminalVelocity.x);
 		}
+		else
+		{
+			maxX = Math.min(body.getLinearVelocity().x, terminalVelocity.x);
+		}
+		float maxY = Math.min(body.getLinearVelocity().y, terminalVelocity.y);
+		body.setLinearVelocity(maxX, maxY);
 		
 		if(timeLeftStar > 0)
 		{
@@ -141,60 +106,11 @@ public class MelonMan extends AbstractGameObject
 			if(timeLeftStar < 0)
 			{
 				timeLeftStar = 0;
-				friction.set(12.0f, 0.0f);
-				terminalVelocity.set(4.0f, 4.0f);
+				terminalVelocity.set(5.0f, 5.0f);
+				acceleration.set(14.0f, 12.0f);
+				friction = 2.0f;
 				setStarPowerup(false);
 			}
-		}
-	}
-	
-	/**
-	 * Overrides updateMotionY from AbstractGameObject to track and handle
-	 * jumpTime and jumping with a power-up
-	 * 
-	 * @param deltaTime
-	 */
-	@Override
-	protected void updateMotionY(float deltaTime)
-	{
-		switch(jumpState)
-		{
-			case GROUNDED:
-				jumpState = JUMP_STATE.FALLING;
-				break;
-				
-			case JUMP_RISING:
-				//Keep track of jump time
-				timeJumping += deltaTime;
-				
-				//Jump time left?
-				if(timeJumping <= JUMP_TIME_MAX)
-				{
-					//Still jumping
-					velocity.y = terminalVelocity.y;
-				}
-				break;
-				
-			case FALLING:
-				break;
-				
-			case JUMP_FALLING:
-				//Add delta times to track jump time
-				timeJumping += deltaTime;
-				
-				//Jump to minimal height if jump key was pressed too short
-				if(timeJumping > 0 && timeJumping <= JUMP_TIME_MIN)
-				{
-					//Still jumping 
-					velocity.y = terminalVelocity.y;
-				}
-				break;
-		}
-		
-		//Update y velocity if MelonMan is not standing on the ground
-		if(jumpState != JUMP_STATE.GROUNDED)
-		{
-			super.updateMotionY(deltaTime);
 		}
 	}
 	

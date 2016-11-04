@@ -40,6 +40,7 @@ public class Level
 	public float sinVal;
 	public int levelWidth;
 	public int levelHeight;
+	public int numberOfRainDrops;
 	public ParticleEffect sandstormParticles = new ParticleEffect();
 	public ParticleEffect sandstormParticles2 = new ParticleEffect();
 	public ParticleEffect sandstormParticles3 = new ParticleEffect();
@@ -111,6 +112,8 @@ public class Level
 	 */
 	private void init(String filename)
 	{
+		numberOfRainDrops = 0;
+		
 		//Player character
 		melonMan = null;
 		
@@ -132,6 +135,7 @@ public class Level
 		
 		//Load image file that represents level data
 		Pixmap pixmap = new Pixmap(Gdx.files.internal(filename));
+		int lastPixel = -1;
 		levelWidth = pixmap.getWidth();
 		levelHeight = pixmap.getHeight();
 		
@@ -165,11 +169,18 @@ public class Level
 				//Ground
 				else if(BLOCK_TYPE.GROUND.sameColor(currentPixel))
 				{
-					obj = new Ground();
-					float heightIncreaseFactor = 0.3f;
-					offsetHeight = -2.5f;
-					obj.position.set(pixelX, baseHeight*obj.dimension.y*heightIncreaseFactor+offsetHeight);
-					groundBlocks.add((Ground)obj);
+					if(lastPixel != currentPixel)
+					{
+						obj = new Ground();
+						float heightIncreaseFactor = 0.3f;
+						offsetHeight = -2.5f;
+						obj.position.set(pixelX, baseHeight*obj.dimension.y*heightIncreaseFactor+offsetHeight);
+						groundBlocks.add((Ground)obj);
+					}
+					else
+					{
+						groundBlocks.get(groundBlocks.size-1).increaseLength(1);
+					}
 				}
 				
 				//Player spawnpoint
@@ -193,12 +204,7 @@ public class Level
 				//Rain drops
 				else if(BLOCK_TYPE.ITEM_RAIN.sameColor(currentPixel))
 				{
-					Rain drop = new Rain();
-					offsetHeight = 0;//-1.5f;
-//					drop.position.set(pixelX, baseHeight*drop.dimension.y+offsetHeight);
-					drop.position.set(MathUtils.random(0.0f, levelWidth), 1.5f + MathUtils.random(0.0f, 0.6f)+offsetHeight+drop.dimension.y);
-					drop.setLevelDimensions(levelWidth, levelHeight);
-					rainDrops.add(drop);
+					numberOfRainDrops++;
 				}
 				
 				//Unknown object/pixel color
@@ -210,6 +216,7 @@ public class Level
 					int a = 0xff & (currentPixel);			//Alpha channel
 					Gdx.app.error(TAG, "Unknown object at x<"+pixelX+"> y<"+pixelY+">: r<"+r+"> g<"+g+"> b<"+b+"> a<"+a+">");
 				}
+				lastPixel = currentPixel;
 			}
 		}
 		

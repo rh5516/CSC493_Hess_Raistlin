@@ -3,6 +3,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import utilities.CharacterSkin;
@@ -20,8 +21,11 @@ public class WorldRenderer implements Disposable
 	private OrthographicCamera camera;
 	private OrthographicCamera cameraGUI;
 	private SpriteBatch batch;
-	private WorldController worldController;
+	private WorldController worldController;	
+	private Box2DDebugRenderer collDebug;
+	private static final boolean DEBUG_DRAW_BOX2D_WORLD = true;
 
+	
 	/**
 	 * Instantiates a WorldController
 	 * 
@@ -49,6 +53,8 @@ public class WorldRenderer implements Disposable
 		cameraGUI.position.set(0,0,0);
 		cameraGUI.setToOrtho(true);	//Flips y-axis
 		cameraGUI.update();
+		
+		collDebug = new Box2DDebugRenderer();
 	}
 	
 	/**
@@ -73,6 +79,12 @@ public class WorldRenderer implements Disposable
 		batch.begin();
 			worldController.level.render(batch);
 		batch.end();
+		
+		//Draw collision boxes around objects, if enabled
+		if(DEBUG_DRAW_BOX2D_WORLD)
+		{
+			collDebug.render(worldController.world, camera.combined);
+		}
 	}
 	
 	/**
