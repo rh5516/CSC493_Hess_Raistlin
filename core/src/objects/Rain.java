@@ -1,5 +1,4 @@
 package objects;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import game.Assets;
@@ -50,10 +49,10 @@ public class Rain extends AbstractGameObject
 	@Override
 	public void update(float deltaTime)
 	{
-		position = body.getPosition();
 		if(!collected)
 		{
 			super.update(deltaTime);
+			position = body.getPosition();
 		}
 	}
 	

@@ -43,15 +43,27 @@ public class Star extends AbstractGameObject
 		return 25;
 	}
 	
+	@Override
+	public void update(float deltaTime)
+	{
+		if(!collected)
+		{
+			position = body.getPosition();
+			super.update(deltaTime);
+		}
+	}
+	
 	/**
 	 * This method draws the Star
 	 */
 	@Override
 	public void render(SpriteBatch batch)
 	{
-		TextureRegion reg = null;
-		reg = regStar;
-		batch.draw(reg.getTexture(), position.x, position.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+		if(!collected)
+		{
+			TextureRegion reg = null;
+			reg = regStar;
+			batch.draw(reg.getTexture(), position.x, position.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+		}
 	}
-
 }

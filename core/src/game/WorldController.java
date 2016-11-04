@@ -5,14 +5,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -24,7 +26,6 @@ import objects.Rain;
 import objects.Star;
 import utilities.AudioManager;
 import utilities.CameraHelper;
-import utilities.CollisionHandler;
 import utilities.Constants;
 
 /**
@@ -34,15 +35,13 @@ import utilities.Constants;
  * @author Raistlin Hess
  *
  */
-public class WorldController extends InputAdapter
+public class WorldController extends InputAdapter implements ContactListener
 {
 	private static final String TAG = WorldController.class.getName();
 	private Game game;
 	private float timeLeftGameOverDelay;
 	private boolean newGame;
 	public Array<AbstractGameObject> objectsForRemoval;
-	private Rectangle r1 = new Rectangle();
-	private Rectangle r2 = new Rectangle();
 	public CameraHelper cameraHelper;
 	public Level level;
 	public int levelRainLimit;
@@ -111,7 +110,7 @@ public class WorldController extends InputAdapter
 		
 		if(world != null) world.dispose();
 		world = new World(new Vector2(0, -9.81f), true);
-		world.setContactListener(new CollisionHandler(this));
+		world.setContactListener(this);
 
 		Vector2 origin = new Vector2();
 		
@@ -134,6 +133,25 @@ public class WorldController extends InputAdapter
 			shape.dispose();
 		}
 		
+		//Create collisions for Star blocks
+		for(Star star: level.stars)
+		{
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.type = BodyType.StaticBody;
+			bodyDef.position.set(star.position);
+			Body body = world.createBody(bodyDef);
+			star.body = body;
+			PolygonShape shape = new PolygonShape();
+			origin.x = star.bounds.width/2.0f;
+			origin.y = star.bounds.height/2.0f;
+			shape.setAsBox(star.bounds.width/2.0f, star.bounds.height/2.0f, origin, 0);
+			FixtureDef fixtureDef = new FixtureDef();
+			fixtureDef.shape = shape;
+			body.createFixture(fixtureDef);
+			body.setUserData(star);
+			shape.dispose();
+		}
+		
 		//Create collision for the player
 		MelonMan obj = level.melonMan;
 		BodyDef bodyDef = new BodyDef();
@@ -150,7 +168,6 @@ public class WorldController extends InputAdapter
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
 		fixtureDef.friction = obj.friction;
-//		fixtureDef.density = 5.0f;
 		body.createFixture(fixtureDef);
 		body.setUserData(obj);
 		obj.body = body;
@@ -314,80 +331,6 @@ public class WorldController extends InputAdapter
 	}
 	
 	/**
-	 * Handle the physics for when MelonMan collides with a Rock
-	 * 
-	 * @param rock
-	 */
-	private void onCollisionMelonManWithGround(Ground ground)
-	{
-		MelonMan melonMan = level.melonMan;
-		float heightDifference = Math.abs(melonMan.position.y-(ground.position.y+ground.bounds.height));
-		
-		if(heightDifference > 0.60f)
-		{
-			boolean hitRightEdge = melonMan.position.x > (ground.position.x+ground.bounds.width/2.0f);
-			if(hitRightEdge)
-			{
-				melonMan.position.x = ground.position.x+ground.bounds.width;
-			}
-			else
-			{
-				melonMan.position.x = ground.position.x-melonMan.bounds.width;
-			}
-			return;
-		}
-		
-//		switch(melonMan.jumpState)
-//		{
-//			case GROUNDED:
-//				break;
-//			case FALLING:
-//			case JUMP_FALLING:
-//				melonMan.position.y = ground.position.y+melonMan.bounds.height-0.3f;
-//				melonMan.jumpState = JUMP_STATE.GROUNDED;
-//				break;
-//				
-//			case JUMP_RISING:
-//				melonMan.position.y = ground.position.y+melonMan.bounds.height-0.3f;
-//				break;
-//		}
-	}
-	
-	/**
-	 * Handle the physics for when MelonMan collides with a Rain object
-	 * 
-	 * @param rainDrop
-	 */
-	private void onCollisionMelonManWithRain(Rain rainDrop)
-	{
-		rainDrop.collected = true;
-		AudioManager.instance.play(Assets.instance.sounds.pickupRain);
-		score += rainDrop.getScore();
-		Gdx.app.log(TAG, "Rain collected");
-	}
-	
-	/**
-	 * Handle the physics for when MelonMan collides with a Star
-	 * 
-	 * @param star
-	 */
-	private void onCollisionMelonManWithStar(Star star)
-	{
-		star.collected = true;
-		AudioManager.instance.play(Assets.instance.sounds.pickupStar);
-		score += star.getScore();
-		level.melonMan.setStarPowerup(true);
-	}
-	
-	/**
-	 * Handle removing rain if it hits the ground
-	 */
-	private void onCollisionRainWithGround(Rain rain)
-	{
-		objectsForRemoval.add(rain);
-	}
-	
-	/**
 	 * This method tests to see if MelonMan collides with any of the other
 	 * collidable objects in the level
 	 */
@@ -398,17 +341,6 @@ public class WorldController extends InputAdapter
 		{
 			processContact(contact);
 			
-		}
-		
-		//Test collision melonMan with stars
-		r1.set(level.melonMan.position.x, level.melonMan.position.y, level.melonMan.bounds.width, level.melonMan.bounds.height);
-		for(Star star: level.stars)
-		{
-			if(star.collected) continue;
-			r2.set(star.position.x, star.position.y, star.bounds.width, star.bounds.height);
-			if(!r1.overlaps(r2)) continue;
-			onCollisionMelonManWithStar(star);
-			break;
 		}
 	}
 	
@@ -446,11 +378,18 @@ public class WorldController extends InputAdapter
 			Rain obj = (Rain) objFixture.getBody().getUserData();
 			score += obj.getScore();
 			AudioManager.instance.play(Assets.instance.sounds.pickupRain);
-			AudioManager.instance.play(Assets.instance.sounds.jump);
-			AudioManager.instance.play(Assets.instance.sounds.liveLost);
-
-			Rain rain = (Rain) objFixture.getBody().getUserData();
-			flagForRemoval(rain);
+			flagForRemoval(obj);
+		}
+		
+		//Handle collision with a star
+		if (objFixture.getBody().getUserData() instanceof Star)
+		{
+			Star obj = (Star) objFixture.getBody().getUserData();
+			score += obj.getScore();
+			obj.collected = true;
+			AudioManager.instance.play(Assets.instance.sounds.pickupStar);
+			level.melonMan.setStarPowerup(true);
+			flagForRemoval(obj);
 		}
 	}
 	
@@ -557,6 +496,15 @@ public class WorldController extends InputAdapter
 					    world.destroyBody(obj.body);
 					}
 				}
+				else
+				{
+					int index = level.stars.indexOf((Star) obj, true);
+					if(index != -1)
+					{
+						level.stars.removeIndex(index);
+						world.destroyBody(obj.body);
+					}
+				}
 			}
 			objectsForRemoval.removeRange(0, objectsForRemoval.size - 1);
 		}
@@ -576,7 +524,7 @@ public class WorldController extends InputAdapter
 		}
 		
 		//Generate rain drops randomly near the player
-//		if(MathUtils.random(0.0f, 2.0f) < deltaTime)
+		if(MathUtils.random(0.0f, 2.0f) < deltaTime)
 		{
 		    //Set starting position to either plus or minus melonMan's position and width
 		    Vector2 centerPos = new Vector2(level.melonMan.position);
@@ -615,4 +563,56 @@ public class WorldController extends InputAdapter
 			scoreVisual = Math.min(score, scoreVisual+250*deltaTime);
 		}
 	}
+
+	
+	/**
+	 * When a collision is detected, this method is called continously until the
+	 * objects are no longer colliding
+	 */
+	@Override
+	public void beginContact(Contact contact)
+	{
+		AbstractGameObject fixtureA = (AbstractGameObject) contact.getFixtureA().getBody().getUserData();
+		AbstractGameObject fixtureB = (AbstractGameObject) contact.getFixtureA().getBody().getUserData();
+		
+		//Check if either fixture was a MelonMan
+		if(fixtureA instanceof MelonMan)
+		{
+			fixtureA.startContact();
+			processContact(contact);
+		}
+		else if(fixtureB instanceof MelonMan)
+		{
+			fixtureB.startContact();
+			processContact(contact);
+		}
+	}
+
+	
+	/**
+	 * When a collision ends, this method is called
+	 */
+	@Override
+	public void endContact(Contact contact)
+	{
+		AbstractGameObject fixtureA = (AbstractGameObject) contact.getFixtureA().getBody().getUserData();
+		AbstractGameObject fixtureB = (AbstractGameObject) contact.getFixtureA().getBody().getUserData();
+		
+		//Check if either fixture was a MelonMan
+		if(fixtureA instanceof MelonMan)
+		{
+			fixtureA.endContact();
+		}
+		else if(fixtureB instanceof MelonMan)
+		{
+			fixtureB.endContact();
+		}
+	}
+
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold){}
+
+	
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse){}
 }

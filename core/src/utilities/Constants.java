@@ -51,5 +51,5 @@ public class Constants
 	public static final float ITEM_STAR_POWERUP_DURATION = 9;
 	
 	//Used for random distance from player that rain will spawn
-	public static final float RAIN_SPAWN_RADIUS = 7.0f;
+	public static final float RAIN_SPAWN_RADIUS = 3.0f;
 }
