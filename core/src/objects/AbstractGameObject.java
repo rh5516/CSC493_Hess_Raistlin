@@ -1,4 +1,5 @@
 package objects;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -24,6 +25,8 @@ public abstract class AbstractGameObject
 	public Rectangle bounds;			//describes physical body for collision detection
 	public Body body;
 	public float rotation;
+	public float stateTime;
+	public Animation animation;
 	
 	/**
 	 * Initialize variables
@@ -49,6 +52,7 @@ public abstract class AbstractGameObject
 	 */
 	public void update(float deltaTime)
 	{
+		stateTime += deltaTime;
 		if(body == null)
 		{
 			updateMotionX(deltaTime);
@@ -116,6 +120,15 @@ public abstract class AbstractGameObject
 		velocity.y += acceleration.y*deltaTime;
 		//Make sure the object's velocity does not exceed terminal velocity
 		velocity.y = MathUtils.clamp(velocity.y,-terminalVelocity.y,terminalVelocity.y);
+	}
+	
+	/**
+	 * Initializes animation and stateTime
+	 */
+	public void setAnimation(Animation animation)
+	{
+		this.animation = animation;
+		stateTime = 0;
 	}
 	
 	/**
