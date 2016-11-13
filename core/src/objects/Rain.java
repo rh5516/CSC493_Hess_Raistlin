@@ -1,6 +1,7 @@
 package objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import game.Assets;
 
 /**
@@ -14,6 +15,8 @@ public class Rain extends AbstractGameObject
 {
 	private TextureRegion regRain;
 	public boolean collected;
+	public boolean decaying;
+	public float decay;
 	
 	public Rain()
 	{
@@ -28,6 +31,8 @@ public class Rain extends AbstractGameObject
 		dimension.set(0.5f, 0.5f);
 		rotation = 0;
 		position.set(0.0f, 10.0f);	//Dummy Height
+		decaying = false;
+		decay = 1.0f;
 		regRain = Assets.instance.rain.rain;
 		
 		//Set bounding box for collision detection
@@ -51,8 +56,18 @@ public class Rain extends AbstractGameObject
 	{
 		if(!collected)
 		{
+			if(decaying)
+			{
+				decay -= deltaTime;
+				body.setLinearVelocity(0, body.getLinearVelocity().y);
+			}
+			else
+			{
+				body.setLinearVelocity(body.getLinearVelocity().x + MathUtils.random(-0.8f, 1.0f), body.getLinearVelocity().y);
+			}
 			super.update(deltaTime);
 			position = body.getPosition();
+			
 		}
 	}
 	

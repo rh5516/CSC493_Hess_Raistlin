@@ -62,11 +62,67 @@ filler_sand
   index: -1
 hazard
   rotate: false
-  xy: 448, 84
+  xy: 485, 84
   size: 50, 31
   orig: 50, 31
   offset: 0, 0
   index: -1
+nextLevel
+  rotate: false
+  xy: 930, 327
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 1
+nextLevel
+  rotate: false
+  xy: 930, 327
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 8
+nextLevel
+  rotate: false
+  xy: 967, 327
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 2
+nextLevel
+  rotate: false
+  xy: 967, 327
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 7
+nextLevel
+  rotate: false
+  xy: 448, 45
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 3
+nextLevel
+  rotate: false
+  xy: 448, 45
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 6
+nextLevel
+  rotate: false
+  xy: 448, 45
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 4
+nextLevel
+  rotate: false
+  xy: 448, 45
+  size: 35, 70
+  orig: 35, 70
+  offset: 0, 0
+  index: 5
 player
   rotate: false
   xy: 748, 160
@@ -76,7 +132,7 @@ player
   index: -1
 rain
   rotate: false
-  xy: 930, 376
+  xy: 1006, 425
   size: 13, 21
   orig: 13, 21
   offset: 0, 0

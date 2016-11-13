@@ -13,6 +13,7 @@ import decoration.PyramidNear;
 import objects.AbstractGameObject;
 import objects.Ground;
 import objects.MelonMan;
+import objects.NextLevel;
 import objects.Rain;
 import objects.Star;
 
@@ -32,6 +33,7 @@ public class Level
 	public MelonMan melonMan;
 	public Array<Rain> rainDrops;
 	public Array<Star> stars;
+	public NextLevel nextLevel;
 	//Decoration
 	public Clouds clouds;
 	public PyramidNear pyramidNear;
@@ -56,7 +58,8 @@ public class Level
 		GROUND(0,255,0),					//Green
 		PLAYER_SPAWNPOINT(255,255,255),		//White
 		ITEM_STAR(255,0,255),				//Purple
-		ITEM_RAIN(255,255,0);				//Yellow
+		ITEM_RAIN(255,255,0),				//Yellow
+		NEXT_LEVEL(0,0,255);					//Blue
 		
 		private int color;
 		/**
@@ -207,6 +210,15 @@ public class Level
 					numberOfRainDrops++;
 				}
 				
+				//Next level post
+				else if(BLOCK_TYPE.NEXT_LEVEL.sameColor(currentPixel))
+				{
+					obj = new NextLevel();
+					offsetHeight = -9.0f;
+					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+					nextLevel = (NextLevel)obj;
+				}
+				
 				//Unknown object/pixel color
 				else
 				{
@@ -229,7 +241,6 @@ public class Level
 		background = new DesertBackground(levelWidth);
 		background.position.set(-background.origin.x,-6.5f);
 		
-		
 		//Free memory
 		pixmap.dispose();
 		Gdx.app.debug(TAG, "Level '"+filename+"' loaded.");
@@ -243,6 +254,8 @@ public class Level
 	public void update(float deltaTime)
 	{
 		melonMan.update(deltaTime);
+		
+		nextLevel.update(deltaTime);
 		
 		for(Ground ground: groundBlocks)
 		{
@@ -323,6 +336,9 @@ public class Level
 		
 		//Draw player
 		melonMan.render(batch);
+		
+		//Draw next level post
+		nextLevel.render(batch);
 		
 		//Draw Rocks
 		for(Ground ground: groundBlocks)

@@ -7,11 +7,13 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-
 import utilities.Constants;
 
 /**
@@ -30,6 +32,7 @@ public class Assets implements Disposable, AssetErrorListener
 	public AssetGround ground;
 	public AssetRain rain;
 	public AssetStar star;
+	public AssetNextLevel nextLevel;
 	public AssetLevelDecoration levelDecoration;
 	public AssetSounds sounds;
 	public AssetMusic music;
@@ -41,7 +44,7 @@ public class Assets implements Disposable, AssetErrorListener
 	 */
 	public void init(AssetManager assetManager)
 	{
-this.assetManager = assetManager;
+		this.assetManager = assetManager;
 		
 		//Set asset manager error handler
 		assetManager.setErrorListener(this);
@@ -79,6 +82,7 @@ this.assetManager = assetManager;
 		ground = new AssetGround(atlas);
 		rain = new AssetRain(atlas);
 		star = new AssetStar(atlas);
+		nextLevel = new AssetNextLevel(atlas);
 		levelDecoration = new AssetLevelDecoration(atlas);
 		sounds = new AssetSounds(assetManager);
 		music = new AssetMusic(assetManager);
@@ -164,6 +168,19 @@ this.assetManager = assetManager;
 		}
 	}
 	
+	public class AssetNextLevel
+	{
+		public final Animation animNextLevel;
+		
+		public AssetNextLevel(TextureAtlas atlas)
+		{
+			//Animations for next level post
+			Array<AtlasRegion> regions = atlas.findRegions("nextLevel");
+			
+			animNextLevel = new Animation(1.0f/5.0f, regions, Animation.PlayMode.LOOP);
+		}
+	}
+	
 	public class AssetLevelDecoration
 	{
 		public final AtlasRegion cloud01;
@@ -173,6 +190,7 @@ this.assetManager = assetManager;
 		public final AtlasRegion cactus;
 		public final AtlasRegion desertBG;
 		public final AtlasRegion fg_sand;
+		
 		public AssetLevelDecoration(TextureAtlas atlas)
 		{
 			cloud01 = atlas.findRegion("cloud01");

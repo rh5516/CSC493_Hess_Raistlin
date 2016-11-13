@@ -1,4 +1,5 @@
 package objects;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -25,6 +26,8 @@ public abstract class AbstractGameObject
 	public float rotation;
 	public int numContacting;
 	public Body body;
+	public float stateTime;
+	public Animation animation;
 	
 	/**
 	 * Initialize variables
@@ -51,6 +54,7 @@ public abstract class AbstractGameObject
 	 */
 	public void update(float deltaTime)
 	{
+		stateTime += deltaTime;
 		if(body != null)
 		{
 			position.set(body.getPosition());
@@ -72,6 +76,15 @@ public abstract class AbstractGameObject
 	public void endContact()
 	{
 		numContacting--;
+	}
+	
+	/**
+	 * Resets the stateTime and changes the animation
+	 */
+	public void setAnimation(Animation animation)
+	{
+		this.animation = animation;
+		stateTime = 0;
 	}
 	
 	/**

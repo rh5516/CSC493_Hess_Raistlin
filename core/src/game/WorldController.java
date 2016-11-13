@@ -101,7 +101,7 @@ public class WorldController extends InputAdapter implements ContactListener
 	{
 		//Set a limit on the amount of rain that spawns based on the amount 
 		//in the level's image
-		levelRainLimit = level.numberOfRainDrops;
+		levelRainLimit = level.numberOfRainDrops*4;
 		numRainAlive = 1;
 		for(Ground ground: level.groundBlocks)
 		{
@@ -474,10 +474,14 @@ public class WorldController extends InputAdapter implements ContactListener
 		//too far under the level for removal
 		for(Rain rain: level.rainDrops)
 		{
-			if(rain.collected || rain.position.y <= -10.0f || rain.body.getLinearVelocity().y == 0.0f)
+			if(rain.collected || rain.position.y <= -10.0f || rain.decay <= 0.0f)// || rain.body.getLinearVelocity().y == 0.0f)
 			{
 //				Gdx.app.log(TAG, "Rain flagged for removal.");
 				objectsForRemoval.add(rain);
+			}
+			else if(rain.body.getLinearVelocity().y == 0.0f)
+			{
+				rain.decaying = true;
 			}
 		}
 		
@@ -524,11 +528,11 @@ public class WorldController extends InputAdapter implements ContactListener
 		}
 		
 		//Generate rain drops randomly near the player
-		if(MathUtils.random(0.0f, 2.0f) < deltaTime)
+		if(MathUtils.random(0.0f, 0.2f) < deltaTime)
 		{
 		    //Set starting position to either plus or minus melonMan's position and width
-		    Vector2 centerPos = new Vector2(level.melonMan.position);
-		    centerPos.x += level.melonMan.bounds.width*MathUtils.random(-1.0f, 1.0f);
+		    Vector2 centerPos = new Vector2(MathUtils.random(0.0f, level.levelWidth), level.melonMan.position.y);
+//		    centerPos.x += level.melonMan.bounds.width*MathUtils.random(-1.0f, 1.0f);
 		    spawnRain(centerPos);
 		}
 		world.step(deltaTime, 8, 3);
