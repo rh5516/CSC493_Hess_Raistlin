@@ -29,6 +29,7 @@ public class Assets implements Disposable, AssetErrorListener
 	private AssetManager assetManager;
 	public AssetFonts fonts;
 	public AssetMelonMan melonMan;
+	public AssetRat rat;
 	public AssetGround ground;
 	public AssetRain rain;
 	public AssetStar star;
@@ -79,6 +80,7 @@ public class Assets implements Disposable, AssetErrorListener
 		//Create game resource objects
 		fonts = new AssetFonts();
 		melonMan = new AssetMelonMan(atlas);
+		rat = new AssetRat(atlas);
 		ground = new AssetGround(atlas);
 		rain = new AssetRain(atlas);
 		star = new AssetStar(atlas);
@@ -141,6 +143,15 @@ public class Assets implements Disposable, AssetErrorListener
 		}
 	}
 	
+	public class AssetRat
+	{
+		public final AtlasRegion head;
+		public AssetRat(TextureAtlas atlas)
+		{
+			head = atlas.findRegion("rat");
+		}
+	}
+	
 	public class AssetGround
 	{
 		public final AtlasRegion edge;
@@ -190,6 +201,7 @@ public class Assets implements Disposable, AssetErrorListener
 		public final AtlasRegion cactus;
 		public final AtlasRegion desertBG;
 		public final AtlasRegion fg_sand;
+		public final Animation sun;
 		
 		public AssetLevelDecoration(TextureAtlas atlas)
 		{
@@ -200,6 +212,8 @@ public class Assets implements Disposable, AssetErrorListener
 			cactus = atlas.findRegion("bg_close");
 			desertBG = atlas.findRegion("desert_bg");
 			fg_sand = atlas.findRegion("fg_sand");
+			Array<AtlasRegion> regions = atlas.findRegions("sun");
+			sun = new Animation(1.0f/8.0f, regions, Animation.PlayMode.LOOP_PINGPONG);
 		}
 	}
 	

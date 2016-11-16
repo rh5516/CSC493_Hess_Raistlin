@@ -1,4 +1,6 @@
 package objects;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -13,6 +15,7 @@ import game.Assets;
  */
 public class Rain extends AbstractGameObject
 {
+	public ParticleEffect splash;
 	private TextureRegion regRain;
 	public boolean collected;
 	public boolean decaying;
@@ -37,12 +40,16 @@ public class Rain extends AbstractGameObject
 		
 		//Set bounding box for collision detection
 		bounds.set(dimension.x, dimension.y, dimension.x, dimension.y);
-		this.
+		
 		//Set physics values
-		terminalVelocity.set(0.0f, 10.0f);
-		velocity.y = 0.5f;	//Prevents rain from being destroyed immediately
+		terminalVelocity.set(0.0f, 1.0f);
+		velocity.y = 0.2f;	//Prevents rain from being destroyed immediately
 		friction = 0;
-		acceleration.set(0.0f, 1.0f);
+		acceleration.set(0.0f, 0.3f);
+		
+		//Init splash effect
+		splash = new ParticleEffect();
+		splash.load(Gdx.files.internal("particles/splash.pfx"), Gdx.files.internal("particles"));
 		
 		collected = false;
 	}
@@ -59,15 +66,16 @@ public class Rain extends AbstractGameObject
 			if(decaying)
 			{
 				decay -= deltaTime;
-				body.setLinearVelocity(0, body.getLinearVelocity().y);
+				body.setLinearVelocity(0.0f, 0.0f);//body.getLinearVelocity().y);
 			}
 			else
 			{
-				body.setLinearVelocity(body.getLinearVelocity().x + MathUtils.random(-0.8f, 1.0f), body.getLinearVelocity().y);
+				body.setLinearVelocity(body.getLinearVelocity().x + MathUtils.random(-0.05f, 0.1f), body.getLinearVelocity().y);
 			}
 			super.update(deltaTime);
 			position = body.getPosition();
-			
+			splash.setPosition(position.x+dimension.x/2.0f, position.y);
+			splash.update(deltaTime);
 		}
 	}
 	
@@ -91,6 +99,10 @@ public class Rain extends AbstractGameObject
 		{
 			TextureRegion reg = regRain;
 			batch.draw(reg.getTexture(), position.x, position.y, origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y, rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+			if(decaying)
+			{
+				splash.draw(batch);
+			}
 		}
 	}
 }

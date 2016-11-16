@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -23,6 +24,7 @@ import objects.AbstractGameObject;
 import objects.Ground;
 import objects.MelonMan;
 import objects.Rain;
+import objects.Rat;
 import objects.Star;
 import utilities.AudioManager;
 import utilities.CameraHelper;
@@ -52,7 +54,8 @@ public class WorldController extends InputAdapter implements ContactListener
 	public float livesVisual;
 	public float scoreVisual;
 	public World world;
-	
+	public float ratTimer;
+	public Vector2 ratSpawn;
 
 	public WorldController(Game game)
 	{
@@ -86,11 +89,12 @@ public class WorldController extends InputAdapter implements ContactListener
 		{
 			level = new Level(Constants.LEVEL_01);
 		}
-		else
-		{
-			level = new Level(Constants.LEVEL_02);
-		}
 		cameraHelper.setTarget(level.melonMan);
+		ratTimer = MathUtils.random(0.5f, 2.0f);
+		ratSpawn = new Vector2();
+		ratSpawn.x = level.ratSpawnPos.x;
+		ratSpawn.y = level.ratSpawnPos.y;
+		
 		initPhysics();
 	}
 	
@@ -103,6 +107,8 @@ public class WorldController extends InputAdapter implements ContactListener
 		//in the level's image
 		levelRainLimit = level.numberOfRainDrops*4;
 		numRainAlive = 1;
+		
+		//Find highest y position of all ground blocks in the level
 		for(Ground ground: level.groundBlocks)
 		{
 			highestGroundBlock = Math.max(highestGroundBlock, ground.position.y);
@@ -171,6 +177,27 @@ public class WorldController extends InputAdapter implements ContactListener
 		body.createFixture(fixtureDef);
 		body.setUserData(obj);
 		obj.body = body;
+		shape.dispose();
+		
+		//Create collision for the Rat
+		Rat rat = level.rat;
+		bodyDef = new BodyDef();
+		bodyDef.type = BodyType.DynamicBody;
+		bodyDef.position.set(rat.position);
+		
+		Body ratBody = world.createBody(bodyDef);
+		
+		shape = new PolygonShape();
+		origin.x = rat.bounds.width/2.0f;
+		origin.y =  rat.bounds.height/2.0f;
+		shape.setAsBox(rat.bounds.width/2.0f, rat.bounds.height/2.0f, origin, 0);
+		
+		fixtureDef = new FixtureDef();
+		fixtureDef.shape = shape;
+		fixtureDef.friction = rat.friction;
+		ratBody.createFixture(fixtureDef);
+		ratBody.setUserData(rat);
+		rat.body = ratBody;
 		shape.dispose();
 	}
 	
@@ -340,7 +367,6 @@ public class WorldController extends InputAdapter implements ContactListener
 		for(Contact contact: world.getContactList())
 		{
 			processContact(contact);
-			
 		}
 	}
 	
@@ -358,12 +384,25 @@ public class WorldController extends InputAdapter implements ContactListener
 		if (objA instanceof MelonMan)
 		{
 			processPlayerContact(fixtureA, fixtureB);
-//			System.out.println(objA.getClass().getName()+":"+objB.getClass().getName());
 		}
 		else if (objB instanceof MelonMan)
 		{
 			processPlayerContact(fixtureB, fixtureA);
-//			System.out.println(objB.getClass().getName()+":"+objA.getClass().getName());
+		}
+		//Determine if either object was a Rat
+		else if(objA instanceof Rat)
+		{
+			if(objB instanceof Rain)
+			{
+				processRatContactRain(fixtureA, fixtureB);
+			}
+		}
+		else if(objB instanceof Rat)
+		{
+			if(objA instanceof Rain)
+			{
+				processRatContactRain(fixtureB, fixtureA);
+			}
 		}
 	}
 
@@ -391,6 +430,16 @@ public class WorldController extends InputAdapter implements ContactListener
 			level.melonMan.setStarPowerup(true);
 			flagForRemoval(obj);
 		}
+	}
+	
+	/**
+	 * Handle physics for when a Rat collides with Rain. 
+	 */
+	private void processRatContactRain(Fixture ratFixture, Fixture rainFixture)
+	{
+		//Remove rain from the world
+		Rain obj = (Rain) rainFixture.getBody().getUserData();
+		flagForRemoval(obj);
 	}
 	
 	/**
@@ -456,6 +505,9 @@ public class WorldController extends InputAdapter implements ContactListener
 			fixtureDef.friction = rain.friction;
 			body.createFixture(fixtureDef);
 			shape.dispose();
+			body.setGravityScale(0.35f);
+			
+//			rain.splash.setPosition(rain.position.x+rain.dimension.x/2.0f, rain.position.y);
 			level.rainDrops.add(rain);
 			
 			numRainAlive++;
@@ -464,28 +516,63 @@ public class WorldController extends InputAdapter implements ContactListener
 	}
 	
 	/**
-	 * Updates the world relative to the previous update
-	 * 
-	 * @param deltaTime
+	 * Checks to see if there is a rat alive, otherwise decrement a counter until
+	 * it hits 0 and then create a new one
 	 */
-	public void update(float deltaTime)
+	public void spawnNewRat(float deltaTime)
 	{
-		//Flag any rain drops that have been collected or go
-		//too far under the level for removal
-		for(Rain rain: level.rainDrops)
+		//Check to see if the Rat fell off the stage
+		if(level.rat != null)
 		{
-			if(rain.collected || rain.position.y <= -10.0f || rain.decay <= 0.0f)// || rain.body.getLinearVelocity().y == 0.0f)
+			if(level.rat.position.y <= -5f)
 			{
-//				Gdx.app.log(TAG, "Rain flagged for removal.");
-				objectsForRemoval.add(rain);
-			}
-			else if(rain.body.getLinearVelocity().y == 0.0f)
-			{
-				rain.decaying = true;
+				objectsForRemoval.add(level.rat);
 			}
 		}
-		
-		//Remove all objects and their Body's in the removal list
+				
+		if(level.rat == null)
+		{
+			ratTimer -= deltaTime;
+			if(ratTimer <= 0.0f)
+			{
+				Rat rat = new Rat();
+ 				rat.position.x = ratSpawn.x;
+ 				rat.position.y = ratSpawn.y;
+				Gdx.app.log(TAG, "Rat's Start Position: "+rat.position.x+","+rat.position.y);
+				
+				//Create collision for the Rat
+				BodyDef bodyDef = new BodyDef();
+				bodyDef.type = BodyType.DynamicBody;
+				bodyDef.position.set(rat.position);
+				
+				Body ratBody = world.createBody(bodyDef);
+				
+				PolygonShape shape = new PolygonShape();
+				rat.origin.x = rat.bounds.width/2.0f;
+				rat.origin.y =  rat.bounds.height/2.0f;
+				shape.setAsBox(rat.bounds.width/2.0f, rat.bounds.height/2.0f, rat.origin, 0);
+				
+				FixtureDef fixtureDef = new FixtureDef();
+				fixtureDef.shape = shape;
+				fixtureDef.friction = rat.friction;
+				ratBody.createFixture(fixtureDef);
+				ratBody.setUserData(rat);
+				rat.body = ratBody;
+				shape.dispose();
+				
+				level.rat = rat;
+				level.rat.body.setLinearVelocity(-0.01f, -0.01f);
+				ratTimer = MathUtils.random(0.5f, 2.0f);
+			}
+		}
+	}
+	
+	/**
+	 * Removes all objects from the list of objects to remove, as well
+	 * as any Box2D physics bodies
+	 */
+	public void removeObjects()
+	{
 		if (objectsForRemoval.size > 0)
 		{
 			for (AbstractGameObject obj : objectsForRemoval)
@@ -500,7 +587,7 @@ public class WorldController extends InputAdapter implements ContactListener
 					    world.destroyBody(obj.body);
 					}
 				}
-				else
+				else if(obj instanceof Star)
 				{
 					int index = level.stars.indexOf((Star) obj, true);
 					if(index != -1)
@@ -509,9 +596,61 @@ public class WorldController extends InputAdapter implements ContactListener
 						world.destroyBody(obj.body);
 					}
 				}
+				else if(obj instanceof Rat)
+				{
+					if(level.rat != null)
+					{
+						level.rat = null;
+						world.destroyBody(obj.body);
+					}
+				}
 			}
 			objectsForRemoval.removeRange(0, objectsForRemoval.size - 1);
 		}
+	}
+	
+	/**
+	 * Updates the world relative to the previous update
+	 * 
+	 * @param deltaTime
+	 */
+	public void update(float deltaTime)
+	{
+		//Check if player touched the nextLevel object. If so, clean up all
+		//bodies and create new level
+//		if(level.nextLevel.touched)
+//		{
+//			if(level.nextLevel.levelToLoad == 1)
+//			{
+//				
+//			}
+//			else
+//			{
+//				
+//			}
+//		}
+		
+		//Flag any rain drops that have been collected or go
+		//too far under the level for removal
+		for(Rain rain: level.rainDrops)
+		{
+			if(rain.collected || rain.position.y <= -10.0f || rain.decay <= 0.0f)// || rain.body.getLinearVelocity().y == 0.0f)
+			{
+//				Gdx.app.log(TAG, "Rain flagged for removal.");
+				objectsForRemoval.add(rain);
+			}
+			else if(rain.body.getLinearVelocity().y == 0.0f)
+			{
+				rain.decaying = true;
+				rain.splash.setDuration(0);
+			}
+		}
+		
+		//Decrease counter until ratTimer is 0 if there is no rat, then create a new one
+		spawnNewRat(deltaTime);
+		
+		//Remove all objects and their Body's in the removal list
+		removeObjects();
 		
 		handleDebugInput(deltaTime);
 		if(isGameOver())
@@ -527,12 +666,10 @@ public class WorldController extends InputAdapter implements ContactListener
 			handleInputGame(deltaTime);
 		}
 		
-		//Generate rain drops randomly near the player
+		//Generate rain drops randomly around the level
 		if(MathUtils.random(0.0f, 0.2f) < deltaTime)
 		{
-		    //Set starting position to either plus or minus melonMan's position and width
 		    Vector2 centerPos = new Vector2(MathUtils.random(0.0f, level.levelWidth), level.melonMan.position.y);
-//		    centerPos.x += level.melonMan.bounds.width*MathUtils.random(-1.0f, 1.0f);
 		    spawnRain(centerPos);
 		}
 		world.step(deltaTime, 8, 3);
@@ -554,6 +691,7 @@ public class WorldController extends InputAdapter implements ContactListener
 		}
 		level.pyramidFar.updateScrollPosition(cameraHelper.getPosition());
 		level.pyramidNear.updateScrollPosition(cameraHelper.getPosition());
+		level.sun.updateScrollPosition(cameraHelper.getPosition());
 		
 		//Timer for losing a life
 		if(livesVisual > lives)
@@ -568,7 +706,6 @@ public class WorldController extends InputAdapter implements ContactListener
 		}
 	}
 
-	
 	/**
 	 * When a collision is detected, this method is called continously until the
 	 * objects are no longer colliding
@@ -591,7 +728,6 @@ public class WorldController extends InputAdapter implements ContactListener
 			processContact(contact);
 		}
 	}
-
 	
 	/**
 	 * When a collision ends, this method is called
@@ -615,7 +751,6 @@ public class WorldController extends InputAdapter implements ContactListener
 
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold){}
-
 	
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse){}

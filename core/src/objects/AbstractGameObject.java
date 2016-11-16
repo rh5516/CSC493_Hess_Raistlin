@@ -45,6 +45,7 @@ public abstract class AbstractGameObject
 		acceleration = new Vector2();
 		bounds = new Rectangle();
 		numContacting = 0;
+		stateTime = 0;
 	}
 	
 	/**

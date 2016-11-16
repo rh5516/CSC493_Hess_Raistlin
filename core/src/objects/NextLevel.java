@@ -12,6 +12,7 @@ import game.Assets;
  */
 public class NextLevel extends AbstractGameObject
 {
+//	public boolean touched;
 	
 	public NextLevel()
 	{

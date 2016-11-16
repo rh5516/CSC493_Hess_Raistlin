@@ -1,153 +1,244 @@
 
 melonman.pack.png
-size: 1024,512
+size: 1024,1024
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 bg_close
   rotate: false
-  xy: 382, 51
+  xy: 832, 712
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 bg_far
   rotate: false
-  xy: 930, 448
+  xy: 636, 494
   size: 89, 57
   orig: 89, 57
   offset: 0, 0
   index: -1
 bg_mid
   rotate: false
-  xy: 930, 399
+  xy: 906, 810
   size: 74, 47
   orig: 74, 47
   offset: 0, 0
   index: -1
 cloud01
   rotate: false
-  xy: 202, 37
+  xy: 184, 383
   size: 178, 78
   orig: 178, 78
   offset: 0, 0
   index: -1
 cloud02
   rotate: false
-  xy: 2, 27
+  xy: 184, 463
   size: 198, 88
   orig: 198, 88
   offset: 0, 0
   index: -1
 desert_bg
   rotate: false
-  xy: 2, 117
+  xy: 2, 553
   size: 744, 388
   orig: 744, 388
   offset: 0, 0
   index: -1
 fg_sand
   rotate: false
-  xy: 748, 325
+  xy: 2, 371
   size: 180, 180
   orig: 180, 180
   offset: 0, 0
   index: -1
 filler_sand
   rotate: false
-  xy: 748, 125
+  xy: 748, 575
   size: 64, 33
   orig: 64, 33
   offset: 0, 0
   index: -1
 hazard
   rotate: false
-  xy: 485, 84
+  xy: 906, 777
   size: 50, 31
   orig: 50, 31
   offset: 0, 0
   index: -1
 nextLevel
   rotate: false
-  xy: 930, 327
+  xy: 86, 170
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 1
 nextLevel
   rotate: false
-  xy: 930, 327
+  xy: 86, 170
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 8
 nextLevel
   rotate: false
-  xy: 967, 327
+  xy: 2, 2
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 2
 nextLevel
   rotate: false
-  xy: 967, 327
+  xy: 2, 2
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 7
 nextLevel
   rotate: false
-  xy: 448, 45
+  xy: 832, 640
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 3
 nextLevel
   rotate: false
-  xy: 448, 45
+  xy: 832, 640
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 6
 nextLevel
   rotate: false
-  xy: 448, 45
+  xy: 832, 640
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 4
 nextLevel
   rotate: false
-  xy: 448, 45
+  xy: 832, 640
   size: 35, 70
   orig: 35, 70
   offset: 0, 0
   index: 5
 player
   rotate: false
-  xy: 748, 160
+  xy: 748, 778
   size: 156, 163
   orig: 156, 163
   offset: 0, 0
   index: -1
 rain
   rotate: false
-  xy: 1006, 425
+  xy: 364, 440
   size: 13, 21
   orig: 13, 21
   offset: 0, 0
   index: -1
+rat
+  rotate: false
+  xy: 2, 242
+  size: 153, 127
+  orig: 153, 127
+  offset: 0, 0
+  index: -1
 snake
   rotate: false
-  xy: 906, 302
+  xy: 184, 360
   size: 21, 21
   orig: 21, 21
   offset: 0, 0
   index: -1
 star
   rotate: false
-  xy: 2, 2
+  xy: 157, 346
   size: 25, 23
   orig: 25, 23
   offset: 0, 0
   index: -1
+sun
+  rotate: false
+  xy: 748, 694
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 1
+sun
+  rotate: false
+  xy: 748, 694
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 10
+sun
+  rotate: false
+  xy: 748, 694
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 12
+sun
+  rotate: false
+  xy: 748, 694
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 11
+sun
+  rotate: false
+  xy: 748, 694
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 9
+sun
+  rotate: false
+  xy: 906, 859
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 2
+sun
+  rotate: false
+  xy: 384, 469
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 3
+sun
+  rotate: false
+  xy: 2, 158
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 4
+sun
+  rotate: false
+  xy: 748, 610
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 5
+sun
+  rotate: false
+  xy: 468, 469
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 6
+sun
+  rotate: false
+  xy: 2, 74
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 7
+sun
+  rotate: false
+  xy: 552, 469
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: 8
