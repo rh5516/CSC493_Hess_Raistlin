@@ -4,17 +4,20 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import decoration.Clouds;
 import decoration.DesertBackground;
 import decoration.Foreground;
 import decoration.PyramidFar;
 import decoration.PyramidNear;
+import decoration.Sun;
 import objects.AbstractGameObject;
 import objects.Ground;
 import objects.MelonMan;
 import objects.NextLevel;
 import objects.Rain;
+import objects.Rat;
 import objects.Star;
 
 /**
@@ -31,6 +34,7 @@ public class Level
 	public Array<Ground> groundBlocks;
 	public Array<Foreground> foreground;
 	public MelonMan melonMan;
+	public Rat rat;
 	public Array<Rain> rainDrops;
 	public Array<Star> stars;
 	public NextLevel nextLevel;
@@ -39,6 +43,7 @@ public class Level
 	public PyramidNear pyramidNear;
 	public PyramidFar pyramidFar;
 	public DesertBackground background;
+	public Sun sun;
 	public float sinVal;
 	public int levelWidth;
 	public int levelHeight;
@@ -47,6 +52,8 @@ public class Level
 	public ParticleEffect sandstormParticles2 = new ParticleEffect();
 	public ParticleEffect sandstormParticles3 = new ParticleEffect();
 	public ParticleEffect sandstormParticles4 = new ParticleEffect();
+	public Vector2 ratSpawnPos;
+//	public int levelID;
 	
 	/**
 	 * This assigns different color values to unique game objects
@@ -57,9 +64,10 @@ public class Level
 		FOREGROUND(255,0,0),				//Red
 		GROUND(0,255,0),					//Green
 		PLAYER_SPAWNPOINT(255,255,255),		//White
+		RAT_SPAWNPOINT(127,127,127),		//Gray
 		ITEM_STAR(255,0,255),				//Purple
 		ITEM_RAIN(255,255,0),				//Yellow
-		NEXT_LEVEL(0,0,255);					//Blue
+		NEXT_LEVEL(0,0,255);				//Blue
 		
 		private int color;
 		/**
@@ -115,26 +123,23 @@ public class Level
 	 */
 	private void init(String filename)
 	{
+		//Remove all characters from the filename, except numbers.
+//		levelID = Integer.parseInt(filename.replaceAll("[\\D]", ""));
+		
+		//Init number of rain drops on screen
 		numberOfRainDrops = 0;
 		
 		//Player character
 		melonMan = null;
+		
+		//Rat
+		rat = null;
 		
 		//Objects
 		groundBlocks = new Array<Ground>();
 		foreground = new Array<Foreground>();
 		rainDrops = new Array<Rain>();
 		stars = new Array<Star>();
-		
-		//Particles
-		sandstormParticles.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
-		sandstormParticles2.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
-		sandstormParticles3.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
-		sandstormParticles4.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
-		sandstormParticles.setPosition(.0f, 8.0f);
-		sandstormParticles2.setPosition(20.0f, 8.0f);
-		sandstormParticles3.setPosition(40.0f, 8.0f);
-		sandstormParticles4.setPosition(60.0f, 8.0f);
 		
 		//Load image file that represents level data
 		Pixmap pixmap = new Pixmap(Gdx.files.internal(filename));
@@ -153,6 +158,7 @@ public class Level
 				float baseHeight = levelHeight-pixelY;
 				//Get color of current pixel as 32-bit RGBA value
 				int currentPixel = pixmap.getPixel(pixelX, pixelY);
+				
 				//Find matching color value to identify block type at (x,y)
 				//Point and create the corresponding game object if there is a match
 				
@@ -193,6 +199,16 @@ public class Level
 					offsetHeight = -3.0f;
 					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
 					melonMan = (MelonMan)obj;
+				}
+				
+				//Rat spawnpoint
+				else if(BLOCK_TYPE.RAT_SPAWNPOINT.sameColor(currentPixel))
+				{
+					obj = new Rat();
+					offsetHeight = -3.0f;
+					ratSpawnPos = new Vector2(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+					obj.position.set(ratSpawnPos);
+					rat = (Rat)obj;
 				}
 				
 				//Star
@@ -240,6 +256,18 @@ public class Level
 		pyramidFar.position.set(pyramidFar.dimension.x*2,-1.2f);
 		background = new DesertBackground(levelWidth);
 		background.position.set(-background.origin.x,-6.5f);
+		sun = new Sun();
+		sun.position.set(0.0f, 0.0f);
+		
+		//Particles
+		sandstormParticles.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles2.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles3.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles4.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
+		sandstormParticles.setPosition(.0f, 8.0f);
+		sandstormParticles2.setPosition(20.0f, 8.0f);
+		sandstormParticles3.setPosition(40.0f, 8.0f);
+		sandstormParticles4.setPosition(60.0f, 8.0f);
 		
 		//Free memory
 		pixmap.dispose();
@@ -254,8 +282,14 @@ public class Level
 	public void update(float deltaTime)
 	{
 		melonMan.update(deltaTime);
+		if(rat != null)
+		{
+			rat.update(deltaTime);
+		}
 		
+		//Update animation
 		nextLevel.update(deltaTime);
+		sun.update(deltaTime);
 		
 		for(Ground ground: groundBlocks)
 		{
@@ -310,6 +344,9 @@ public class Level
 		background.render(batch);
 		background.position.x = bgTmp;
 		
+		//Draw sun
+		sun.render(batch);
+		
 		//Draw Pyramids
 		float pfTmpX = pyramidFar.position.x;
 		float pfTmpY = pyramidFar.position.y;
@@ -336,6 +373,12 @@ public class Level
 		
 		//Draw player
 		melonMan.render(batch);
+		
+		//Draw rat
+		if(rat != null)
+		{
+			rat.render(batch);
+		}
 		
 		//Draw next level post
 		nextLevel.render(batch);
