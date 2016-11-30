@@ -79,7 +79,7 @@ public class MenuScreen extends AbstractGameScreen
 	private void loadSettings()
 	{
 		GamePreferences prefs = GamePreferences.instance;
-		prefs.load();
+		prefs.loadPrefs();
 		chkSound.setChecked(prefs.sound);
 		sldSound.setValue(prefs.volSound);
 		chkMusic.setChecked(prefs.music);
@@ -102,7 +102,7 @@ public class MenuScreen extends AbstractGameScreen
 		prefs.volMusic = sldMusic.getValue();
 		prefs.charSkin = selCharSkin.getSelectedIndex();
 		prefs.showFpsCounter = chkShowFpsCounter.isChecked();
-		prefs.save();
+		prefs.savePrefs();
 	}
 	
 	/**
@@ -421,7 +421,7 @@ public class MenuScreen extends AbstractGameScreen
 		
 		// Checkbox "Show FPS Counter"
 		chkShowFpsCounter = new CheckBox("", skinLibgdx);
-		tbl.add(new Label("Show FPS Coutner", skinLibgdx));
+		tbl.add(new Label("Show FPS Counter", skinLibgdx));
 		tbl.add(chkShowFpsCounter);
 		tbl.row();
 		

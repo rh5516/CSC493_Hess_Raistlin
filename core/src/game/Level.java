@@ -53,7 +53,6 @@ public class Level
 	public ParticleEffect sandstormParticles3 = new ParticleEffect();
 	public ParticleEffect sandstormParticles4 = new ParticleEffect();
 	public Vector2 ratSpawnPos;
-//	public int levelID;
 	
 	/**
 	 * This assigns different color values to unique game objects
@@ -61,7 +60,6 @@ public class Level
 	public enum BLOCK_TYPE
 	{
 		EMPTY(0,0,0),						//Black
-		FOREGROUND(255,0,0),				//Red
 		GROUND(0,255,0),					//Green
 		PLAYER_SPAWNPOINT(255,255,255),		//White
 		RAT_SPAWNPOINT(127,127,127),		//Gray
@@ -123,9 +121,6 @@ public class Level
 	 */
 	private void init(String filename)
 	{
-		//Remove all characters from the filename, except numbers.
-//		levelID = Integer.parseInt(filename.replaceAll("[\\D]", ""));
-		
 		//Init number of rain drops on screen
 		numberOfRainDrops = 0;
 		
@@ -153,7 +148,11 @@ public class Level
 			for(int pixelX = 0; pixelX < levelWidth; pixelX++)
 			{
 				AbstractGameObject obj = null;
-				float offsetHeight = 0;
+				float offsetHeight = -3.0f;
+				if(filename.contains("_02.png"))
+				{
+					offsetHeight = -6.0f;
+				}
 				//Height grows from bottom to top
 				float baseHeight = levelHeight-pixelY;
 				//Get color of current pixel as 32-bit RGBA value
@@ -165,24 +164,14 @@ public class Level
 				//Empty space
 				if(BLOCK_TYPE.EMPTY.sameColor(currentPixel));
 				
-				//Foreground
-				else if(BLOCK_TYPE.FOREGROUND.sameColor(currentPixel))
-				{
-					obj = new Foreground();
-					float heightIncreaseFactor = 0.25f;
-					offsetHeight = -2.5f;
-					obj.position.set(pixelX, baseHeight*obj.dimension.y*heightIncreaseFactor+offsetHeight);
-					foreground.add((Foreground)obj);
-				}
-				
 				//Ground
 				else if(BLOCK_TYPE.GROUND.sameColor(currentPixel))
 				{
-					if(lastPixel != currentPixel)
+					if(lastPixel != currentPixel || pixelX+1 == levelWidth)
 					{
 						obj = new Ground();
 						float heightIncreaseFactor = 0.3f;
-						offsetHeight = -2.5f;
+//						offsetHeight = -2.5f;
 						obj.position.set(pixelX, baseHeight*obj.dimension.y*heightIncreaseFactor+offsetHeight);
 						groundBlocks.add((Ground)obj);
 					}
@@ -196,8 +185,8 @@ public class Level
 				else if(BLOCK_TYPE.PLAYER_SPAWNPOINT.sameColor(currentPixel))
 				{
 					obj = new MelonMan();
-					offsetHeight = -3.0f;
-					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+//					offsetHeight = -3.0f;
+					obj.position.set(pixelX, obj.dimension.y+1.5f+offsetHeight);
 					melonMan = (MelonMan)obj;
 				}
 				
@@ -205,8 +194,8 @@ public class Level
 				else if(BLOCK_TYPE.RAT_SPAWNPOINT.sameColor(currentPixel))
 				{
 					obj = new Rat();
-					offsetHeight = -3.0f;
-					ratSpawnPos = new Vector2(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+//					offsetHeight = -3.0f;
+					ratSpawnPos = new Vector2(pixelX,baseHeight+obj.dimension.y+offsetHeight);
 					obj.position.set(ratSpawnPos);
 					rat = (Rat)obj;
 				}
@@ -215,7 +204,7 @@ public class Level
 				else if(BLOCK_TYPE.ITEM_STAR.sameColor(currentPixel))
 				{
 					obj = new Star();
-					offsetHeight = -2.2f;
+//					offsetHeight = -2.2f;
 					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
 					stars.add((Star)obj);
 				}
@@ -230,8 +219,8 @@ public class Level
 				else if(BLOCK_TYPE.NEXT_LEVEL.sameColor(currentPixel))
 				{
 					obj = new NextLevel();
-					offsetHeight = -9.0f;
-					obj.position.set(pixelX, baseHeight*obj.dimension.y+offsetHeight);
+//					offsetHeight = -9.4f;
+					obj.position.set(pixelX, obj.dimension.y/2.0f+0.2f+offsetHeight);
 					nextLevel = (NextLevel)obj;
 				}
 				
@@ -255,7 +244,8 @@ public class Level
 		pyramidNear.position.set(-1,-0.6f);
 		pyramidFar.position.set(pyramidFar.dimension.x*2,-1.2f);
 		background = new DesertBackground(levelWidth);
-		background.position.set(-background.origin.x,-6.5f);
+//		background.position.set(-background.origin.x,-6.5f);
+		background.position.set(-background.origin.x,-6.0f);
 		sun = new Sun();
 		sun.position.set(0.0f, 0.0f);
 		
@@ -264,10 +254,10 @@ public class Level
 		sandstormParticles2.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
 		sandstormParticles3.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
 		sandstormParticles4.load(Gdx.files.internal("particles/sandstorm.pfx"), Gdx.files.internal("particles"));
-		sandstormParticles.setPosition(.0f, 8.0f);
-		sandstormParticles2.setPosition(20.0f, 8.0f);
-		sandstormParticles3.setPosition(40.0f, 8.0f);
-		sandstormParticles4.setPosition(60.0f, 8.0f);
+		sandstormParticles.setPosition(-15.0f, 8.0f);
+		sandstormParticles2.setPosition(0.0f, 8.0f);
+		sandstormParticles3.setPosition(15.0f, 8.0f);
+		sandstormParticles4.setPosition(30.0f, 8.0f);
 		
 		//Free memory
 		pixmap.dispose();

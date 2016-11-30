@@ -25,7 +25,7 @@ public class MelonManMain extends Game
 		Assets.instance.init(new AssetManager());
 		
 		//Load preferences for audio settings and start music
-		GamePreferences.instance.load();
+		GamePreferences.instance.loadPrefs();
 		AudioManager.instance.play(Assets.instance.music.song01);
 		
 		//Start game at menu screen

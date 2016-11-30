@@ -31,7 +31,7 @@ public class DesertBackground extends AbstractGameObject
 	 */
 	private void init()
 	{
-		dimension.set(length+(length/1.7f), length/7.0f);
+		dimension.set(length*2/*+(length/1.7f)*/, length/4.5f);
 		background = Assets.instance.levelDecoration.desertBG;
 		origin.x = -dimension.x;
 	}

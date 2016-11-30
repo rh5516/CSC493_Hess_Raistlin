@@ -24,6 +24,9 @@ public class Constants
 	//File location for preferences
 	public static final String PREFERENCES = "melonman.prefs";
 	
+	//File location for high scores
+	public static final String HIGHSCORES = "highscores.txt";
+	
 	//Delay after game over
 	public static final float TIME_DELAY_GAME_OVER = 3;
 	

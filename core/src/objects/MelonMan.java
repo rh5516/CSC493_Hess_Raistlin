@@ -20,6 +20,7 @@ public class MelonMan extends AbstractGameObject
 	private TextureRegion regHead;
 	public VIEW_DIRECTION viewDirection;
 	public boolean hasStar;
+	public boolean grounded;
 	public float timeLeftStar;
 	public enum VIEW_DIRECTION{LEFT, RIGHT}
 
@@ -50,6 +51,7 @@ public class MelonMan extends AbstractGameObject
 		
 		//View direction
 		viewDirection = VIEW_DIRECTION.RIGHT;
+		grounded = false;
 		
 		//Power-ups
 		hasStar = false;
@@ -84,6 +86,7 @@ public class MelonMan extends AbstractGameObject
 	@Override
 	public void update(float deltaTime)
 	{
+		grounded = false;
 		super.update(deltaTime);
 		
 		//Limit velocity to terminal

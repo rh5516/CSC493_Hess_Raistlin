@@ -23,6 +23,7 @@ import gui.MenuScreen;
 import objects.AbstractGameObject;
 import objects.Ground;
 import objects.MelonMan;
+import objects.NextLevel;
 import objects.Rain;
 import objects.Rat;
 import objects.Star;
@@ -42,7 +43,7 @@ public class WorldController extends InputAdapter implements ContactListener
 	private static final String TAG = WorldController.class.getName();
 	private Game game;
 	private float timeLeftGameOverDelay;
-	private boolean newGame;
+	public int newGame;
 	public Array<AbstractGameObject> objectsForRemoval;
 	public CameraHelper cameraHelper;
 	public Level level;
@@ -56,6 +57,8 @@ public class WorldController extends InputAdapter implements ContactListener
 	public World world;
 	public float ratTimer;
 	public Vector2 ratSpawn;
+	public boolean showScores;
+	public boolean scoresUpdated;
 
 	public WorldController(Game game)
 	{
@@ -69,12 +72,15 @@ public class WorldController extends InputAdapter implements ContactListener
 	 */
 	public void init()
 	{
-		newGame = true;
+		newGame = 0;
 		Gdx.input.setInputProcessor(this);
 		cameraHelper = new CameraHelper();
 		lives = Constants.LIVES_START;
 		timeLeftGameOverDelay = 0;
 		objectsForRemoval = new Array<AbstractGameObject>();
+		showScores = false;
+		scoresUpdated = false;
+		highestGroundBlock = -5.0f;
 		initLevel();
 	}
 	
@@ -83,17 +89,26 @@ public class WorldController extends InputAdapter implements ContactListener
 	 */
 	public void initLevel()
 	{
-		score = 0;
-		scoreVisual = score;
-		if(newGame)
+		if(newGame < 1)
+		{
+			score = 0;
+			scoreVisual = score;
+		}
+		
+		if(newGame%2 == 0)
 		{
 			level = new Level(Constants.LEVEL_01);
+			ratSpawn = new Vector2();
+			ratSpawn.x = level.ratSpawnPos.x;
+			ratSpawn.y = level.ratSpawnPos.y;
+		}
+		else
+		{
+			level = new Level(Constants.LEVEL_02);
+			ratSpawn.x = level.ratSpawnPos.x;
 		}
 		cameraHelper.setTarget(level.melonMan);
 		ratTimer = MathUtils.random(0.5f, 2.0f);
-		ratSpawn = new Vector2();
-		ratSpawn.x = level.ratSpawnPos.x;
-		ratSpawn.y = level.ratSpawnPos.y;
 		
 		initPhysics();
 	}
@@ -105,7 +120,7 @@ public class WorldController extends InputAdapter implements ContactListener
 	{
 		//Set a limit on the amount of rain that spawns based on the amount 
 		//in the level's image
-		levelRainLimit = level.numberOfRainDrops*4;
+		levelRainLimit = level.numberOfRainDrops*3;
 		numRainAlive = 1;
 		
 		//Find highest y position of all ground blocks in the level
@@ -153,6 +168,7 @@ public class WorldController extends InputAdapter implements ContactListener
 			shape.setAsBox(star.bounds.width/2.0f, star.bounds.height/2.0f, origin, 0);
 			FixtureDef fixtureDef = new FixtureDef();
 			fixtureDef.shape = shape;
+			fixtureDef.isSensor = true;
 			body.createFixture(fixtureDef);
 			body.setUserData(star);
 			shape.dispose();
@@ -163,9 +179,7 @@ public class WorldController extends InputAdapter implements ContactListener
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(obj.position);
-		
 		Body body = world.createBody(bodyDef);
-		
 		PolygonShape shape = new PolygonShape();
 		origin.x = obj.bounds.width/2.0f;
 		origin.y =  obj.bounds.height/2.0f;
@@ -184,20 +198,35 @@ public class WorldController extends InputAdapter implements ContactListener
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(rat.position);
-		
 		Body ratBody = world.createBody(bodyDef);
-		
 		shape = new PolygonShape();
 		origin.x = rat.bounds.width/2.0f;
 		origin.y =  rat.bounds.height/2.0f;
 		shape.setAsBox(rat.bounds.width/2.0f, rat.bounds.height/2.0f, origin, 0);
-		
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
 		fixtureDef.friction = rat.friction;
 		ratBody.createFixture(fixtureDef);
 		ratBody.setUserData(rat);
 		rat.body = ratBody;
+		shape.dispose();
+		
+		//Collision for NextLevel
+		NextLevel post = level.nextLevel;
+		bodyDef = new BodyDef();
+		bodyDef.type = BodyType.StaticBody;
+		bodyDef.position.set(post.position);
+		body = world.createBody(bodyDef);
+		shape = new PolygonShape();
+		origin.x = post.bounds.width/2.0f;
+		origin.y =  post.bounds.height/2.0f;
+		shape.setAsBox(post.bounds.width/2.0f, post.bounds.height/2.0f, origin, 0);
+		fixtureDef = new FixtureDef();
+		fixtureDef.shape = shape;
+		fixtureDef.friction = post.friction;
+		body.createFixture(fixtureDef);
+		body.setUserData(post);
+		post.body = body;
 		shape.dispose();
 	}
 	
@@ -206,7 +235,14 @@ public class WorldController extends InputAdapter implements ContactListener
 	 */
 	public void onDeath()
 	{
-		level = new Level(Constants.LEVEL_01);
+		if(newGame%2 == 0)
+		{
+			level = new Level(Constants.LEVEL_01);
+		}
+		else
+		{
+			level = new Level(Constants.LEVEL_02);
+		}
 		cameraHelper.setTarget(level.melonMan);
 		initPhysics();
 	}
@@ -217,6 +253,7 @@ public class WorldController extends InputAdapter implements ContactListener
 	private void backToMenu()
 	{
 		//Switch to menu screen
+		showScores = false;
 		game.setScreen(new MenuScreen(game));
 	}
 	
@@ -244,9 +281,10 @@ public class WorldController extends InputAdapter implements ContactListener
 			//Allow jumping if melonMan is on the ground
 			if(Gdx.input.isTouched() || Gdx.input.isKeyPressed(Keys.SPACE))
 			{
-				if(level.melonMan.body.getLinearVelocity().y == 0.0f)
+				if(level.melonMan.body.getLinearVelocity().y <= 0.0f && level.melonMan.grounded)
 				{
 					level.melonMan.body.applyLinearImpulse(0.0f, level.melonMan.acceleration.y, level.melonMan.origin.x, level.melonMan.origin.y, true);
+					level.melonMan.grounded = false;
 				}
 			}
 		}
@@ -263,6 +301,12 @@ public class WorldController extends InputAdapter implements ContactListener
 		if(Gdx.app.getType() != ApplicationType.Desktop)
 		{
 			return;
+		}
+		
+		//Remove high score list and start new game
+		if(showScores && (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Keys.SPACE)))
+		{
+			showScores = false;
 		}
 		
 		if(!cameraHelper.hasTarget(level.melonMan))
@@ -377,6 +421,7 @@ public class WorldController extends InputAdapter implements ContactListener
 	{
 		Fixture fixtureA = contact.getFixtureA();
 		Fixture fixtureB = contact.getFixtureB();
+		if(fixtureA == null || fixtureB == null) return;
 		AbstractGameObject objA = (AbstractGameObject) fixtureA.getBody().getUserData();
 		AbstractGameObject objB = (AbstractGameObject) fixtureB.getBody().getUserData();
 
@@ -412,33 +457,77 @@ public class WorldController extends InputAdapter implements ContactListener
 	private void processPlayerContact(Fixture playerFixture, Fixture objFixture)
 	{
 		//Handle collision with a rain drop
-		if (objFixture.getBody().getUserData() instanceof Rain)
+		if(objFixture.getBody().getUserData() instanceof Rain)
 		{
 			Rain obj = (Rain) objFixture.getBody().getUserData();
-			score += obj.getScore();
+			if(!showScores && !isGameOver())
+			{
+				score += obj.getScore();
+			}
 			AudioManager.instance.play(Assets.instance.sounds.pickupRain);
 			flagForRemoval(obj);
 		}
 		
 		//Handle collision with a star
-		if (objFixture.getBody().getUserData() instanceof Star)
+		else if(objFixture.getBody().getUserData() instanceof Star)
 		{
 			Star obj = (Star) objFixture.getBody().getUserData();
-			score += obj.getScore();
+			if(!showScores && !isGameOver())
+			{
+				score += obj.getScore();
+			}
 			obj.collected = true;
 			AudioManager.instance.play(Assets.instance.sounds.pickupStar);
 			level.melonMan.setStarPowerup(true);
 			flagForRemoval(obj);
 		}
+		
+		//Handle collision with ground
+		else if(objFixture.getBody().getUserData() instanceof Ground)// && heightDifference < 0.25f)
+		{
+//			Ground ground = (Ground) objFixture.getBody().getUserData();
+//			MelonMan melonMan = (MelonMan) playerFixture.getBody().getUserData();
+//			float heightDifference = Math.abs(melonMan.position.y-(ground.position.y + ground.bounds.height));//rock.bounds.height));
+//			if(heightDifference < 0.15f)
+//			{
+				level.melonMan.grounded = true;
+//			}
+		}
+		
+		//Handle collision with Rat. Allows jumping off of his head
+		else if(objFixture.getBody().getUserData() instanceof Rat)
+		{
+//			Ground ground = (Ground) objFixture.getBody().getUserData();
+			Rat rat = (Rat) objFixture.getBody().getUserData();
+			MelonMan melonMan = (MelonMan) playerFixture.getBody().getUserData();
+			float heightDifference = Math.abs(melonMan.position.y-(rat.position.y + rat.bounds.height));
+			if(heightDifference < 0.10f)
+			{
+				level.melonMan.grounded = true;
+			}
+		}
+		
+		//Handle collision with next level post 
+		else if(objFixture.getBody().getUserData() instanceof NextLevel)
+		{
+			newGame++;
+			level.melonMan.body.setLinearVelocity(0,0);
+			initLevel();
+		}
 	}
 	
 	/**
-	 * Handle physics for when a Rat collides with Rain. 
+	 * Handle physics for when a Rat collides with Rain. Decrease score by 1
+	 * for every rain drop collected
 	 */
 	private void processRatContactRain(Fixture ratFixture, Fixture rainFixture)
 	{
 		//Remove rain from the world
 		Rain obj = (Rain) rainFixture.getBody().getUserData();
+		if(!showScores && !isGameOver())
+		{
+			score--;
+		}
 		flagForRemoval(obj);
 	}
 	
@@ -449,17 +538,15 @@ public class WorldController extends InputAdapter implements ContactListener
 	 */
 	public boolean isPlayerUnderGround()
 	{
-		return level.melonMan.position.y < -5;
+		return level.melonMan.position.y < -8;
 	}
 	
 	/**
-	 * Determines if a game over occurred.  Returns true if lives < 0
-	 * 
-	 * @return
+	 * Determines if a game over occurred.  Returns true if lives < 1
 	 */
 	public boolean isGameOver()
 	{
-		return lives < 0;
+		return lives < 1;
 	}
 	
 	/**
@@ -524,7 +611,7 @@ public class WorldController extends InputAdapter implements ContactListener
 		//Check to see if the Rat fell off the stage
 		if(level.rat != null)
 		{
-			if(level.rat.position.y <= -5f)
+			if(level.rat.position.y <= -6)
 			{
 				objectsForRemoval.add(level.rat);
 			}
@@ -538,15 +625,13 @@ public class WorldController extends InputAdapter implements ContactListener
 				Rat rat = new Rat();
  				rat.position.x = ratSpawn.x;
  				rat.position.y = ratSpawn.y;
-				Gdx.app.log(TAG, "Rat's Start Position: "+rat.position.x+","+rat.position.y);
+//				Gdx.app.log(TAG, "Rat's Start Position: "+rat.position.x+","+rat.position.y);
 				
 				//Create collision for the Rat
 				BodyDef bodyDef = new BodyDef();
 				bodyDef.type = BodyType.DynamicBody;
 				bodyDef.position.set(rat.position);
-				
 				Body ratBody = world.createBody(bodyDef);
-				
 				PolygonShape shape = new PolygonShape();
 				rat.origin.x = rat.bounds.width/2.0f;
 				rat.origin.y =  rat.bounds.height/2.0f;
@@ -562,7 +647,9 @@ public class WorldController extends InputAdapter implements ContactListener
 				
 				level.rat = rat;
 				level.rat.body.setLinearVelocity(-0.01f, -0.01f);
-				ratTimer = MathUtils.random(0.5f, 2.0f);
+				//Set random timer based on the current score
+				ratTimer = MathUtils.random(0.1f, (MathUtils.clamp(2.0f, 0.11f, 2.0f-(score/500))));
+				Gdx.app.log(TAG, "Rat timer: "+ratTimer);
 			}
 		}
 	}
@@ -616,20 +703,6 @@ public class WorldController extends InputAdapter implements ContactListener
 	 */
 	public void update(float deltaTime)
 	{
-		//Check if player touched the nextLevel object. If so, clean up all
-		//bodies and create new level
-//		if(level.nextLevel.touched)
-//		{
-//			if(level.nextLevel.levelToLoad == 1)
-//			{
-//				
-//			}
-//			else
-//			{
-//				
-//			}
-//		}
-		
 		//Flag any rain drops that have been collected or go
 		//too far under the level for removal
 		for(Rain rain: level.rainDrops)
@@ -658,7 +731,15 @@ public class WorldController extends InputAdapter implements ContactListener
 			timeLeftGameOverDelay -= deltaTime;
 			if(timeLeftGameOverDelay < 0)
 			{
-				backToMenu();
+				//Draw high scores
+				if(!scoresUpdated)
+				{
+					showScores = true;
+				}
+				if(!showScores)
+				{
+					backToMenu();
+				}
 			}
 		}
 		else
@@ -682,6 +763,7 @@ public class WorldController extends InputAdapter implements ContactListener
 			lives--;
 			if(isGameOver())
 			{
+				level.melonMan.body.setLinearVelocity(0.0f,level.melonMan.body.getLinearVelocity().y);
 				timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
 			}
 			else

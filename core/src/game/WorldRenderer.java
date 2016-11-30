@@ -23,7 +23,7 @@ public class WorldRenderer implements Disposable
 	private SpriteBatch batch;
 	private WorldController worldController;	
 	private Box2DDebugRenderer collDebug;
-	private static final boolean DEBUG_DRAW_BOX2D_WORLD = true;
+	private static final boolean DEBUG_DRAW_BOX2D_WORLD = false;
 
 	
 	/**
@@ -108,6 +108,9 @@ public class WorldRenderer implements Disposable
 			
 			//Draw game over text
 			renderGuiGameOverMessage(batch);
+			
+			//Draw high score text
+			renderHighScores(batch);
 		batch.end();
 	}
 
@@ -187,7 +190,7 @@ public class WorldRenderer implements Disposable
 	{
 		float x = cameraGUI.viewportWidth/2;
 		float y = cameraGUI.viewportHeight/2;
-		if(worldController.isGameOver())
+		if(worldController.isGameOver() && !worldController.showScores)
 		{
 			BitmapFont fontGameOver = Assets.instance.fonts.defaultBig;
 			fontGameOver.setColor(1, 0.75f, 0.25f, 1);
@@ -196,6 +199,70 @@ public class WorldRenderer implements Disposable
 		}
 	}
 	
+	/**
+	 * Displays a list of the top 10 high scores after the game over message
+	 */
+	private void renderHighScores(SpriteBatch batch)
+	{
+		if(worldController.showScores)
+		{
+			//Update the high score list one time
+			if(!worldController.scoresUpdated)
+			{
+				GamePreferences.instance.updateScores(worldController.score);
+				worldController.scoresUpdated = true;
+			}
+			
+			//Make camera follow the rat 
+			if(worldController.level.rat != null)
+			{
+				worldController.cameraHelper.setTarget(worldController.level.rat);
+			}
+			
+			float x = cameraGUI.viewportWidth/4.0f;
+			float y = cameraGUI.viewportHeight/10.0f;
+			float yOffset = 0.0f;
+			boolean highScore = false;
+			BitmapFont fontScores = Assets.instance.fonts.defaultBig;
+			fontScores.setColor(0,0.5f,1,1);
+			fontScores.draw(batch, "H  I  G  H  S  C  O  R  E  S", cameraGUI.viewportWidth/2, y, 0,Align.center,false);
+			yOffset += 40.0f;
+			
+			//Load each of the high scores and display them in a nicely formatted way
+			for(int i = 1; i < 11; i++)
+			{
+				String score = "";
+				if(i < 10)
+				{
+					score += "  "+i+"                           ";
+				}
+				else
+				{
+					score += i+"                           ";
+				}
+				score += GamePreferences.instance.scores.getInteger(""+i);
+				
+				//Highlight the score for the current game as white. Otherwise, light blue
+				if(!highScore && GamePreferences.instance.scores.getInteger(""+i) == worldController.score)
+				{
+					fontScores.setColor(1,1,1,1);
+					highScore = true;
+				}
+				else
+				{
+					fontScores.setColor(0,0.5f,1,1);
+				}
+				fontScores.draw(batch, score,x, y+yOffset, 0, Align.left, false);
+				yOffset += 40.0f;
+			}
+			fontScores.setColor(1,1,1,1);
+		}
+	}
+	
+	/**
+	 * Draws the image of the Star below the score indicator, along with a timer for how much
+	 * longer the powerup will be active
+	 */
 	private void renderGuiStarPowerup(SpriteBatch batch)
 	{
 		float x = -15;
