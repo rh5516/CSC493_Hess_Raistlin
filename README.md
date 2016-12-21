@@ -13,6 +13,6 @@ But you are not the only one trying to survive. Watch out for the fierce rat who
 will try to push you off of the edge to your doom!
 
 # Controls:
-Mouse: Interact with menu/jump
-Arrow keys: movement
+Mouse: Interact with menu/jump  ;
+Arrow keys: movement  ;
 Spacebar: jump
